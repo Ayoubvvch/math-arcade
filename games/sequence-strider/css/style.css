@@ -49,6 +49,29 @@ bdi.math-ltr {
   margin-inline: 2px;
 }
 
+.katex-bdi {
+  display: inline-block;
+  direction: ltr;
+  unicode-bidi: isolate;
+  margin-inline: 2px;
+  vertical-align: middle;
+}
+
+.katex-display-bdi {
+  display: block;
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: center;
+  margin: 6px 0;
+  overflow-x: auto;
+}
+
+.seq-katex-pill {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.44);
+  color: #d1fae5;
+}
+
 #gameCanvas {
   display: block;
   position: fixed;
@@ -624,7 +647,8 @@ bdi.math-ltr {
   .bar-track { width: 68px; }
   .hud-tools { justify-content: space-between; width: 100%; }
   .tool-chip { padding: 4px 7px; font-size: 10.5px; }
-  .gp-pill { display: none; }
+  .gp-pill,
+  .seq-katex-pill { display: none; }
   .sector-banner { top: 102px; font-size: 11px; padding: 4px 10px; }
 
   .bottom-deck {

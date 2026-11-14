@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>عدّاء المتتاليات — Sequence Strider | Suites Numériques</title>
+  <link rel="stylesheet" href="../../shared/vendor/katex/katex.min.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -40,6 +41,10 @@
       <div class="stat-pill">
         <span>النقاط:</span>
         <span class="text-emerald math-ltr" id="scoreValue">0</span>
+      </div>
+
+      <div class="stat-pill seq-katex-pill" id="seqCoordBadge" title="الرتبة الحالية n، قيمة الحد u_n، والمسافة عن النهاية L">
+        <span id="seqLiveKaTeX" class="math-ltr">n=1, u_1=1.1</span>
       </div>
 
       <div class="stat-pill combo-badge hidden" id="comboBadge">
@@ -111,12 +116,12 @@
   <section class="modal-backdrop" id="introModal" role="dialog" aria-modal="true" aria-labelledby="introTitle">
     <div class="modal-card cyber-panel">
       <h1 class="modal-title" id="introTitle">عدّاء المتتاليات — <span>Sequence Strider</span></h1>
-      <p class="modal-subtitle">
-        اجتز حلبة المفاعل الكمي ثنائية الأبعاد بين سقف المكبر <bdi dir="ltr" class="math-ltr">y = M</bdi> وقاع المصغر <bdi dir="ltr" class="math-ltr">y = m</bdi>، واخترق البوابات الأربع عبر قواعد المتتاليات (39–50) لهزيمة نواة «النقطة الصامدة».
+      <p class="modal-subtitle" data-katex-mixed>
+        تحرّك داخل المعلم المتقطع $(\mathbb{N}, u_n)$ المحصور بين سقف المكبر $y = M = 5$ وقاع المصغر $y = m = -1$ نحو أفق النهاية $\lim_{n\to+\infty} u_n = L = 2$، واخترق البوابات الأربع عبر قواعد المتتاليات (39–50).
       </p>
 
-      <div class="core-brief-box">
-        <strong>⚡ ميكانيكا المتتاليات الحية:</strong> تجنّب اصطدام حدود الليزر <bdi dir="ltr" class="math-ltr">(M, m)</bdi> بالقفز المزدوج والاندفاع، أضعف طائرات <bdi dir="ltr" class="math-ltr">qⁿ</bdi> المتباعدة بنبضات الليزر، واخترق البوابات <bdi dir="ltr" class="math-ltr">[▢]</bdi> عبر المبيانات العنكبوتية ومبرهنة الدركيين!
+      <div class="core-brief-box" data-katex-mixed>
+        <strong>⚡ صهر المتتاليات في اللعب:</strong> كل خطوة أفقية تفعّل عمود الترجع $P(n) \implies P(n+1)$ داخل ممر الدركيين $v_n \le u_n \le w_n$، بينما تعرض شاشة الرادار موقعك $(n, u_n)$ والمسافة $|u_n - L|$ بالوقت الحقيقي!
       </div>
 
       <div>
@@ -249,6 +254,8 @@
     </div>
   </section>
 
+  <script src="../../shared/vendor/katex/katex.min.js"></script>
+  <script src="../../shared/katex-kit.js"></script>
   <script src="js/curriculum.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/world.js"></script>

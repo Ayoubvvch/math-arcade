@@ -884,28 +884,42 @@ class ArcadeConsoleHub {
       this.showcaseStatus.textContent = game.status === 'ready' ? '● READY TO PLAY' : '● IN DEVELOPMENT';
     }
     if (this.showcaseTitle) this.showcaseTitle.textContent = game.title;
-    if (this.showcaseDesc) this.showcaseDesc.textContent = game.description;
+    if (this.showcaseDesc) {
+      if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(this.showcaseDesc, game.description);
+      else this.showcaseDesc.textContent = game.description;
+    }
     if (this.blueprintArtBadge) this.blueprintArtBadge.textContent = game.icon || '∫';
 
     if (this.showcaseConcepts) {
-      this.showcaseConcepts.innerHTML = (game.mathConcepts || [])
-        .map((c) => `<span class="concept-pill">${c}</span>`)
-        .join('');
+      this.showcaseConcepts.innerHTML = '';
+      (game.mathConcepts || []).forEach((c) => {
+        const pill = document.createElement('span');
+        pill.className = 'concept-pill';
+        if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(pill, c);
+        else pill.textContent = c;
+        this.showcaseConcepts.appendChild(pill);
+      });
     }
 
     if (this.showcaseControls) {
-      this.showcaseControls.innerHTML = (game.controls || ['Left Stick / WASD: Move'])
+      this.showcaseControls.innerHTML = '';
+      (game.controls || ['Left Stick / WASD: Move'])
         .slice(0, 6)
-        .map((entry) => {
+        .forEach((entry) => {
           const { key, desc } = formatControlEntry(entry);
-          return `
-            <li class="blueprint-control-row">
-              <span class="ctrl-key">${key}</span>
-              <span class="ctrl-desc">${desc}</span>
-            </li>
-          `;
-        })
-        .join('');
+          const li = document.createElement('li');
+          li.className = 'blueprint-control-row';
+          const keySpan = document.createElement('span');
+          keySpan.className = 'ctrl-key';
+          keySpan.textContent = key;
+          const descSpan = document.createElement('span');
+          descSpan.className = 'ctrl-desc';
+          if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(descSpan, desc);
+          else descSpan.textContent = desc;
+          li.appendChild(keySpan);
+          li.appendChild(descSpan);
+          this.showcaseControls.appendChild(li);
+        });
     }
 
     // Shift ambient glow color subtly to match game theme (pure CSS opacity/background, zero blur)
@@ -952,12 +966,27 @@ class ArcadeConsoleHub {
     const actionEl = document.getElementById('modal-game-action');
 
     if (titleEl) titleEl.textContent = game.title;
-    if (descEl) descEl.textContent = game.description;
+    if (descEl) {
+      if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(descEl, game.description);
+      else descEl.textContent = game.description;
+    }
     if (conceptsEl) {
-      conceptsEl.innerHTML = (game.mathConcepts || []).map((c) => `<li>${c}</li>`).join('');
+      conceptsEl.innerHTML = '';
+      (game.mathConcepts || []).forEach((c) => {
+        const li = document.createElement('li');
+        if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(li, c);
+        else li.textContent = c;
+        conceptsEl.appendChild(li);
+      });
     }
     if (controlsEl) {
-      controlsEl.innerHTML = (game.controls || ['Standard Gamepad / Keyboard']).map((c) => `<li>${c}</li>`).join('');
+      controlsEl.innerHTML = '';
+      (game.controls || ['Standard Gamepad / Keyboard']).forEach((c) => {
+        const li = document.createElement('li');
+        if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(li, c);
+        else li.textContent = c;
+        controlsEl.appendChild(li);
+      });
     }
     if (actionEl) {
       actionEl.innerHTML = `

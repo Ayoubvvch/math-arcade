@@ -1,45 +1,90 @@
 /**
- * Asymptote Asylum - World Simulation, Gore Decals, Victims, Seals & Boss Engine
- * Designed for locked 60 FPS on integrated GPUs with ring-capped decals & particles.
+ * Asymptote Asylum - Living Orthonormal Coordinate Plane (O, i, j) World & Biomechanical Horror Engine
+ * The player walks inside an orthonormal coordinate frame (O, i, j) along the curve (Cf): y = f(x),
+ * constructs walkable Tangent Bridges (T): y = f'(x0)(x - x0) + f(x0), reflects across the First Bisector Δ: y = x,
+ * crosses Vertical Asymptote Rifts x = a, and dismembers articulated biomechanical horrors at 60 FPS.
  */
 
 window.WORLD_CONFIG = {
   WIDTH: 1920,
   HEIGHT: 1280,
+  ORIGIN_X: 960,
+  ORIGIN_Y: 640,
+  UNIT_PX: 120, // 1 mathematical unit in (O, i, j) = 120px
   MAX_DECALS: 165,
   MAX_PARTICLES: 145
+};
+
+// Coordinate conversion helpers between World Pixels (x, y) and Orthonormal Frame (X, Y) in (O, i, j)
+window.worldToMath = function(wx, wy) {
+  const cfg = window.WORLD_CONFIG;
+  return {
+    X: (wx - cfg.ORIGIN_X) / cfg.UNIT_PX,
+    Y: (cfg.ORIGIN_Y - wy) / cfg.UNIT_PX
+  };
+};
+
+window.mathToWorld = function(X, Y) {
+  const cfg = window.WORLD_CONFIG;
+  return {
+    x: cfg.ORIGIN_X + X * cfg.UNIT_PX,
+    y: cfg.ORIGIN_Y - Y * cfg.UNIT_PX
+  };
+};
+
+// Analytical Primary Curve f(X), First Derivative f'(X), and Second Derivative f''(X) in (O, i, j)
+window.evalCurveF = function(X) {
+  // Rich differentiable wave with extrema, inflection near X=0, and steep branches
+  return 1.65 * Math.sin(0.55 * X) + 0.18 * X * Math.cos(0.35 * X);
+};
+
+window.evalCurveFPrime = function(X) {
+  return 1.65 * 0.55 * Math.cos(0.55 * X) + 0.18 * Math.cos(0.35 * X) - 0.18 * 0.35 * X * Math.sin(0.35 * X);
+};
+
+window.evalCurveFSecond = function(X) {
+  return -1.65 * 0.55 * 0.55 * Math.sin(0.55 * X) - 2 * 0.18 * 0.35 * Math.sin(0.35 * X) - 0.18 * 0.35 * 0.35 * X * Math.cos(0.35 * X);
+};
+
+// Secondary Auxiliary Curve g(X) for relative position & intersection (Topics 31, 32, 36)
+window.evalCurveG = function(X) {
+  return 0.32 * X - 0.4;
 };
 
 window.createInitialAsylumState = function(topicFilter = 'all') {
   const W = window.WORLD_CONFIG.WIDTH;
   const H = window.WORLD_CONFIG.HEIGHT;
 
-  // Strategic morgue walls/pillars creating spooky sightlines without snagging player
+  // Coordinate-plane structural monoliths (Asymptote Anchors)
   const pillars = [
-    { x: 640, y: 420, w: 96, h: 170 },
-    { x: 1184, y: 420, w: 96, h: 170 },
-    { x: 640, y: 710, w: 96, h: 170 },
-    { x: 1184, y: 710, w: 96, h: 170 },
-    { x: 900, y: 200, w: 120, h: 90 },
-    { x: 900, y: 990, w: 120, h: 90 },
-    { x: 250, y: 580, w: 110, h: 120 },
-    { x: 1560, y: 580, w: 110, h: 120 }
+    { x: 640, y: 420, w: 86, h: 150, label: 'x = -2.3' },
+    { x: 1194, y: 420, w: 86, h: 150, label: 'x = +2.3' },
+    { x: 640, y: 710, w: 86, h: 150, label: 'f\'(x)=0' },
+    { x: 1194, y: 710, w: 86, h: 150, label: 'f\'\'(x)=0' }
+  ];
+
+  // Vertical Asymptote Plasma Rifts (x = -3.8 and x = +3.8 in math coords)
+  const asymptoteRifts = [
+    { mathX: -3.8, worldX: window.WORLD_CONFIG.ORIGIN_X - 3.8 * window.WORLD_CONFIG.UNIT_PX, label: 'x = -3.8 (lim f = ±∞)' },
+    { mathX: 3.8, worldX: window.WORLD_CONFIG.ORIGIN_X + 3.8 * window.WORLD_CONFIG.UNIT_PX, label: 'x = +3.8 (lim f = ±∞)' }
   ];
 
   const wards = window.ASYLUM_WARDS || [];
+  // 4 Coordinate Fracture Nodes at strategic quadrants of (O, i, j)
   const sealCoords = [
-    { x: 410, y: 270 },
-    { x: 1510, y: 270 },
-    { x: 1510, y: 1010 },
-    { x: 410, y: 1010 }
+    { x: 410, y: 270, mathLabel: 'A(-4.6, 3.1)' },
+    { x: 1510, y: 270, mathLabel: 'B(4.6, 3.1)' },
+    { x: 1510, y: 1010, mathLabel: 'C(4.6, -3.1)' },
+    { x: 410, y: 1010, mathLabel: 'D(-4.6, -3.1)' }
   ];
 
   const seals = sealCoords.map((pos, idx) => {
-    const ward = wards[idx] || { id: idx + 1, name: `الختم ${idx + 1}`, topics: [23 + idx], sealColor: '#ef4444' };
+    const ward = wards[idx] || { id: idx + 1, name: `عقدة المعلم ${idx + 1}`, topics: [23 + idx], sealColor: '#ef4444' };
     return {
       id: idx,
       x: pos.x,
       y: pos.y,
+      mathLabel: pos.mathLabel,
       radius: 42,
       wardName: ward.name,
       topics: ward.topics,
@@ -49,36 +94,37 @@ window.createInitialAsylumState = function(topicFilter = 'all') {
     };
   });
 
-  // Shackled captives in blood cages — core "الغاية تبرر الوسيلة" sacrifice targets
-  const captiveCoords = [
-    { x: 560, y: 260, label: 'سجين #07' },
-    { x: 1360, y: 260, label: 'سجين #14' },
-    { x: 960, y: 470, label: 'مريض معزول' },
-    { x: 560, y: 1020, label: 'سجين #23' },
-    { x: 1360, y: 1020, label: 'سجين #38' },
-    { x: 960, y: 810, label: 'حارس مصاب' }
+  // Tangent Forge Nodes (مرتكزات التقريب التآلفي وجسور المماس) replacing old prisoner cages
+  const forgeCoords = [
+    { x: 560, y: 260, x0: '-3.3', label: 'مرتكز مماس $x_0 = -3.3$' },
+    { x: 1360, y: 260, x0: '+3.3', label: 'مرتكز مماس $x_0 = +3.3$' },
+    { x: 960, y: 470, x0: '0.0', label: 'نقطة انعطاف $I(0, 0)$' },
+    { x: 560, y: 1020, x0: '-3.3', label: 'مرتكز الدالة المساعدة $g(x)$' },
+    { x: 1360, y: 1020, x0: '+3.3', label: 'مرتكز الدالة العكسية $f^{-1}$' },
+    { x: 960, y: 810, x0: '0.0', label: 'مركز التماثل $\\Omega(a, b)$' }
   ];
 
-  const captives = captiveCoords.map((c, idx) => ({
+  const captives = forgeCoords.map((c, idx) => ({
     id: idx,
     x: c.x,
     y: c.y,
+    x0: c.x0,
     radius: 20,
     label: c.label,
     alive: true,
     shiverPhase: Math.random() * Math.PI * 2
   }));
 
-  // Initial ambient floor blood puddles & scratches so asylum looks gruesome right on spawn
+  // Initial ambient blood & bone decals along the coordinate plane
   const decals = [];
-  for (let i = 0; i < 28; i++) {
+  for (let i = 0; i < 24; i++) {
     decals.push({
       kind: i % 5 === 0 ? 'bones' : 'blood',
       x: 220 + Math.random() * (W - 440),
       y: 180 + Math.random() * (H - 360),
-      r: 14 + Math.random() * 28,
+      r: 14 + Math.random() * 26,
       rot: Math.random() * Math.PI * 2,
-      alpha: 0.36 + Math.random() * 0.35
+      alpha: 0.34 + Math.random() * 0.32
     });
   }
 
@@ -91,7 +137,7 @@ window.createInitialAsylumState = function(topicFilter = 'all') {
     damageFlash: 0,
     jumpscareTimer: 0,
     heartbeatTimer: 0,
-    bannerText: 'جناح المشرحة — حطّم الأختام الأربعة',
+    bannerText: 'المعلم المتعامد الممنظم (O, i, j) — اسلك المنحنى (Cf) وحطّم عقد الانشقاق الأربعة',
     bannerTimer: 4.5,
 
     player: {
@@ -99,13 +145,14 @@ window.createInitialAsylumState = function(topicFilter = 'all') {
       y: H / 2,
       vx: 0,
       vy: 0,
+      walkCycle: 0,
       radius: 19,
-      aimAngle: -Math.PI / 2,
+      aimAngle: 0,
       hp: 100,
       maxHp: 100,
       sanity: 100,
       maxSanity: 100,
-      speed: 285,
+      speed: 295,
       invulnTimer: 0,
       dashTimer: 0,
       dashCooldown: 0,
@@ -117,10 +164,27 @@ window.createInitialAsylumState = function(topicFilter = 'all') {
       flareCooldown: 0,
       flareTimer: 0,
       sacrificeCooldown: 0,
-      frenzyTimer: 0
+      frenzyTimer: 0,
+      onCurveBonus: false,
+      mathX: 0,
+      mathY: 0,
+      curveY: 0,
+      derivFPrime: 0.9,
+      derivFSecond: 0,
+      coatNodes: [
+        { x: W / 2, y: H / 2 },
+        { x: W / 2 - 12, y: H / 2 + 6 },
+        { x: W / 2 - 24, y: H / 2 + 12 }
+      ]
     },
 
+    // Active player-constructed Tangent Line Bridges (T): y = f'(x0)(x - x0) + f(x0)
+    tangentBridges: [
+      { x0: 0, y0: 0, slope: 1.09, span: 2.8, timer: 999, permanent: true }
+    ],
+
     pillars,
+    asymptoteRifts,
     seals,
     captives,
     enemies: [],
@@ -218,7 +282,6 @@ function resolveCircleRect(ent, rect) {
     ent.x += (dx / dist) * push;
     ent.y += (dy / dist) * push;
   } else {
-    // Inside rect fallback
     const left = Math.abs(ent.x - rect.x);
     const right = Math.abs(rect.x + rect.w - ent.x);
     const top = Math.abs(ent.y - rect.y);
@@ -241,7 +304,6 @@ window.spawnAsylumEnemy = function(state, forceType = null) {
   const p = state.player;
   const broken = state.stats.brokenSeals;
 
-  // Spawn off-flashlight edge around player within world bounds
   let sx = p.x;
   let sy = p.y;
   for (let tries = 0; tries < 8; tries++) {
@@ -259,42 +321,55 @@ window.spawnAsylumEnemy = function(state, forceType = null) {
   let kind = forceType;
   if (!kind) {
     const roll = Math.random();
-    if (roll < 0.55) kind = 'stalker';
-    else if (roll < 0.82) kind = 'wisp';
-    else kind = 'butcher';
+    if (roll < 0.52) kind = 'stalker';      // Cusp Arachnid (عنكبوت النقطة المزواة)
+    else if (roll < 0.80) kind = 'wisp';    // Asymptote Seraph (طيف المقارب المائل)
+    else kind = 'butcher';                  // Inflection Executioner (جزّار نقطة الانعطاف)
   }
 
   const scale = 1 + broken * 0.16;
-  let radius = 19;
+  let radius = 20;
   let hp = Math.round(52 * scale);
-  let speed = 168 + broken * 8;
+  let speed = 166 + broken * 8;
   let dmg = 14 + broken * 2;
-  let name = 'زاحف المشتقة';
+  let name = 'عنكبوت النقطة المزواة';
+  let mathTag = 'f\'d ≠ f\'g';
 
   if (kind === 'butcher') {
-    radius = 27;
+    radius = 28;
     hp = Math.round(115 * scale);
     speed = 112 + broken * 5;
     dmg = 22 + broken * 3;
-    name = 'جزّار المشرحة';
+    name = 'جزّار الانعطاف';
+    mathTag = 'f\'\'(x₀)=0';
   } else if (kind === 'wisp') {
-    radius = 17;
+    radius = 18;
     hp = Math.round(38 * scale);
-    speed = 195 + broken * 9;
+    speed = 192 + broken * 9;
     dmg = 11 + broken * 2;
-    name = 'طيف المماس';
+    name = 'طيف المقارب';
+    mathTag = 'y = ax+b';
   } else if (kind === 'boss') {
-    radius = 44;
+    radius = 46;
     hp = 460;
     speed = 148;
     dmg = 26;
-    name = 'شبح المقارب اللانهائي';
+    name = 'عملاق الفرع الشلجمي اللانهائي';
+    mathTag = 'lim f(x)/x = ∞';
+  }
+
+  // Multi-segment trail for Boss & articulated animation phase
+  const segments = [];
+  if (kind === 'boss') {
+    for (let s = 0; s < 6; s++) {
+      segments.push({ x: sx - s * 28, y: sy });
+    }
   }
 
   state.enemies.push({
     id: state.nextEnemyId++,
     kind,
     name,
+    mathTag,
     x: sx,
     y: sy,
     radius,
@@ -305,7 +380,8 @@ window.spawnAsylumEnemy = function(state, forceType = null) {
     hitFlash: 0,
     staggered: false,
     shootTimer: kind === 'boss' ? 1.8 : 99,
-    twitchPhase: Math.random() * Math.PI * 2
+    twitchPhase: Math.random() * Math.PI * 2,
+    segments
   });
 };
 
@@ -316,8 +392,8 @@ window.spawnBossFiend = function(state) {
   state.screenShake = Math.max(state.screenShake, 18);
   state.jumpscareTimer = 0.45;
   window.HorrorAudio?.playJumpscare?.();
-  window.setWardBanner(state, '⚠ تحطمت الأختام الأربعة — شبح المقارب اللانهائي يطاردك!', 5.0);
-  window.addFloatingText(state, state.player.x, state.player.y - 46, 'BOSS: شبح المقارب اللانهائي!', '#ef4444', 2.4);
+  window.setWardBanner(state, '⚠ تحررت عقد المعلم (O,i,j) — عملاق الفرع الشلجمي يطاردك!', 5.0);
+  window.addFloatingText(state, state.player.x, state.player.y - 46, 'BOSS: عملاق الفرع اللانهائي!', '#ef4444', 2.4);
 };
 
 window.damageEnemy = function(state, enemy, dmg, knockAngle, forceExecution = false) {
@@ -329,10 +405,9 @@ window.damageEnemy = function(state, enemy, dmg, knockAngle, forceExecution = fa
   window.spawnGoreParticles(state, enemy.x, enemy.y, 10, '#dc2626', 210);
   window.addBloodDecal(state, enemy.x, enemy.y, 14 + Math.random() * 14, 'blood');
 
-  // Check stagger threshold for Execution ritual opportunity!
   if (!enemy.staggered && enemy.hp > 0 && enemy.hp <= enemy.maxHp * 0.42 && (enemy.kind === 'butcher' || enemy.kind === 'boss')) {
     enemy.staggered = true;
-    window.addFloatingText(state, enemy.x, enemy.y - enemy.radius - 12, 'مشلول! [✕/▢] للإعدام', '#fbbf24', 1.6);
+    window.addFloatingText(state, enemy.x, enemy.y - enemy.radius - 12, 'مشلول! [✕/▢] للتشريح', '#fbbf24', 1.6);
   }
 
   if (enemy.hp <= 0 || forceExecution) {
@@ -356,19 +431,18 @@ window.killEnemy = function(state, enemy, wasExecuted = false) {
   window.addBloodDecal(state, enemy.x, enemy.y, enemy.kind === 'boss' ? 58 : 28, 'blood');
   window.addBloodDecal(state, enemy.x + 8, enemy.y - 6, enemy.radius * 0.8, 'bones');
   window.spawnGoreParticles(state, enemy.x, enemy.y, wasExecuted ? 26 : 16, '#ef4444', 300);
-  window.spawnGoreParticles(state, enemy.x, enemy.y, 6, '#e5e7eb', 160); // bone splinters
+  window.spawnGoreParticles(state, enemy.x, enemy.y, 6, '#e5e7eb', 160);
 
   if (wasExecuted) {
     state.screenShake = Math.max(state.screenShake, 12);
     window.HorrorAudio?.playExecuteGore?.();
     state.player.hp = Math.min(state.player.maxHp, state.player.hp + 15);
     state.player.sanity = Math.min(state.player.maxSanity, state.player.sanity + 20);
-    window.addFloatingText(state, enemy.x, enemy.y - 26, 'إعدام دموي +15 دم!', '#34d399', 1.4);
+    window.addFloatingText(state, enemy.x, enemy.y - 26, 'تشريح مشتق +15 دم!', '#34d399', 1.4);
   } else {
     window.addFloatingText(state, enemy.x, enemy.y - 18, `تمزيق +${basePts}`, '#fca5a5', 0.9);
   }
 
-  // Drop pickups cleanly
   if (enemy.kind !== 'boss' && Math.random() < 0.36) {
     state.pickups.push({
       id: Date.now() + Math.random(),
@@ -390,7 +464,6 @@ window.performSlashAttack = function(state) {
   const p = state.player;
   if (p.slashCooldown > 0) return false;
 
-  // Priority: check if an adjacent staggered Butcher/Boss is within execution distance!
   const execTarget = state.enemies.find(e => e.staggered && Math.hypot(e.x - p.x, e.y - p.y) < 105);
   if (execTarget) {
     window.openRitualChallenge(state, { kind: 'execute', enemy: execTarget });
@@ -398,11 +471,11 @@ window.performSlashAttack = function(state) {
   }
 
   p.slashCooldown = p.frenzyTimer > 0 ? 0.22 : 0.34;
-  p.slashAnim = 0.22;
+  p.slashAnim = 0.24;
   window.HorrorAudio?.playSlash?.();
 
-  const range = 104;
-  const dmg = p.frenzyTimer > 0 ? 78 : 42;
+  const range = 108;
+  const dmg = p.frenzyTimer > 0 ? 78 : 44;
   let hitAny = false;
 
   for (let i = state.enemies.length - 1; i >= 0; i--) {
@@ -414,7 +487,7 @@ window.performSlashAttack = function(state) {
       let diff = Math.atan2(dy, dx) - p.aimAngle;
       while (diff > Math.PI) diff -= Math.PI * 2;
       while (diff < -Math.PI) diff += Math.PI * 2;
-      if (Math.abs(diff) <= 1.25 || dist < 42) {
+      if (Math.abs(diff) <= 1.3 || dist < 44) {
         hitAny = true;
         window.damageEnemy(state, e, dmg, Math.atan2(dy, dx), false);
       }
@@ -442,12 +515,12 @@ window.performBloodDash = function(state, moveX, moveY) {
     dy /= mag;
   }
   p.dashTimer = 0.19;
-  p.dashCooldown = 1.05;
-  p.invulnTimer = Math.max(p.invulnTimer, 0.32);
-  p.dashVx = dx * 760;
-  p.dashVy = dy * 760;
+  p.dashCooldown = 1.0;
+  p.invulnTimer = Math.max(p.invulnTimer, 0.34);
+  p.dashVx = dx * 770;
+  p.dashVy = dy * 770;
   window.HorrorAudio?.playDash?.();
-  window.addBloodDecal(state, p.x, p.y, 18, 'blood');
+  window.addBloodDecal(state, p.x, p.y, 16, 'blood');
   window.spawnGoreParticles(state, p.x, p.y, 10, '#991b1b', 140);
   return true;
 };
@@ -455,14 +528,14 @@ window.performBloodDash = function(state, moveX, moveY) {
 window.performBloodBolt = function(state) {
   const p = state.player;
   if (p.boltCooldown > 0) return false;
-  p.boltCooldown = p.frenzyTimer > 0 ? 0.16 : 0.26;
-  const spd = 680;
+  p.boltCooldown = p.frenzyTimer > 0 ? 0.16 : 0.25;
+  const spd = 700;
   state.projectiles.push({
-    x: p.x + Math.cos(p.aimAngle) * 20,
-    y: p.y + Math.sin(p.aimAngle) * 20,
+    x: p.x + Math.cos(p.aimAngle) * 22,
+    y: p.y + Math.sin(p.aimAngle) * 22,
     vx: Math.cos(p.aimAngle) * spd,
     vy: Math.sin(p.aimAngle) * spd,
-    dmg: p.frenzyTimer > 0 ? 54 : 30,
+    dmg: p.frenzyTimer > 0 ? 54 : 32,
     life: 1.15
   });
   window.HorrorAudio?.playBolt?.();
@@ -472,62 +545,74 @@ window.performBloodBolt = function(state) {
 window.performFlare = function(state) {
   const p = state.player;
   if (p.flareCooldown > 0) return false;
-  p.flareCooldown = 5.5;
-  p.flareTimer = 3.5;
+  p.flareCooldown = 5.2;
+  p.flareTimer = 4.0;
   p.sanity = Math.min(p.maxSanity, p.sanity + 35);
   window.HorrorAudio?.playFlare?.();
   window.spawnGoreParticles(state, p.x, p.y, 20, '#34d399', 260);
-  window.addFloatingText(state, p.x, p.y - 34, 'شعلة UV كاشفة — تبطيء الوحوش!', '#34d399', 1.5);
+  window.addFloatingText(state, p.x, p.y - 34, 'انعكاس المنصف Δ: y=x ➔ كشف (Cf⁻¹) وتبطيء الوحوش!', '#34d399', 1.7);
   return true;
 };
 
 /**
- * Core Dark Mechanic: "الغاية تبرر الوسيلة" (The End Justifies the Means)
- * - Near a live captive (<135px): violently sacrifice the captive for +35 HP, +50 Sanity, Blood Frenzy, and a massive Blood Nova!
- * - Otherwise: sacrifice 20 self HP (if hp > 20) to erupt a Crimson Blood Nova and enter Blood Frenzy!
+ * Coordinate Tangent Bridge & Affine Linearization Overdrive [L2 / F]:
+ * Constructs a physical walkable Tangent Line Bridge (T): y = f'(x0)(x - x0) + f(x0) at player's x0
+ * and unleashes a high-velocity Derivative Wave d/dx across nearby monsters!
  */
 window.performForbiddenSacrificeWorld = function(state) {
   const p = state.player;
   if (p.sacrificeCooldown > 0) return false;
 
-  const captive = state.captives.find(c => c.alive && Math.hypot(c.x - p.x, c.y - p.y) <= 135);
-  if (!captive && p.hp <= 22) {
-    window.addFloatingText(state, p.x, p.y - 26, 'الدم غير كافٍ للتضحية!', '#fbbf24', 1.1);
+  const forge = state.captives.find(c => c.alive && Math.hypot(c.x - p.x, c.y - p.y) <= 145);
+  if (!forge && p.hp <= 22) {
+    window.addFloatingText(state, p.x, p.y - 26, 'تحتاج طاقة حيوية لبناء جسر المماس!', '#fbbf24', 1.1);
     return false;
   }
 
-  p.sacrificeCooldown = 3.0;
+  p.sacrificeCooldown = 2.6;
   state.stats.sacrifices++;
   window.HorrorAudio?.playSacrifice?.();
-  window.triggerGamepadHaptic?.(160, 0.8, 0.9);
-  state.screenShake = Math.max(state.screenShake, 16);
+  window.triggerGamepadHaptic?.(150, 0.75, 0.9);
+  state.screenShake = Math.max(state.screenShake, 14);
 
-  if (captive) {
-    captive.alive = false;
+  // Build physical Tangent Bridge (T): y = f'(x0)(x - x0) + f(x0) in (O, i, j)
+  const x0 = p.mathX;
+  const y0 = window.evalCurveF(x0);
+  const slope = window.evalCurveFPrime(x0);
+  state.tangentBridges.push({
+    x0,
+    y0,
+    slope,
+    span: 2.6,
+    timer: 18.0,
+    permanent: false
+  });
+  if (state.tangentBridges.length > 5) {
+    state.tangentBridges.splice(1, 1);
+  }
+
+  if (forge) {
+    forge.alive = false;
     p.hp = Math.min(p.maxHp, p.hp + 35);
     p.sanity = Math.min(p.maxSanity, p.sanity + 50);
     p.frenzyTimer = 7.0;
-    window.addBloodDecal(state, captive.x, captive.y, 50, 'blood');
-    window.addBloodDecal(state, captive.x, captive.y, 24, 'bones');
-    window.spawnGoreParticles(state, captive.x, captive.y, 34, '#ef4444', 340);
-    window.addFloatingText(state, captive.x, captive.y - 28, 'قربان «الغاية تبرر الوسيلة» +35 دم!', '#f87171', 2.0);
+    window.spawnGoreParticles(state, forge.x, forge.y, 28, '#38bdf8', 320);
+    window.addFloatingText(state, forge.x, forge.y - 28, `جسر المماس (T) عند x₀=${x0.toFixed(1)} +35 دم!`, '#38bdf8', 2.0);
   } else {
-    p.hp -= 20;
-    p.sanity = Math.min(p.maxSanity, p.sanity + 30);
-    p.frenzyTimer = 5.0;
-    window.addBloodDecal(state, p.x, p.y, 44, 'blood');
-    window.spawnGoreParticles(state, p.x, p.y, 28, '#dc2626', 320);
-    window.addFloatingText(state, p.x, p.y - 28, 'نزيف محرّم -20 دم ➔ هيجان الدم!', '#f87171', 1.8);
+    p.hp -= 15;
+    p.sanity = Math.min(p.maxSanity, p.sanity + 35);
+    p.frenzyTimer = 5.5;
+    window.spawnGoreParticles(state, p.x, p.y, 26, '#ef4444', 310);
+    window.addFloatingText(state, p.x, p.y - 28, `تقريب تآلفي y = ${slope.toFixed(1)}(x - ${x0.toFixed(1)}) + ${y0.toFixed(1)}!`, '#f87171', 1.9);
   }
 
-  // Obliterate / blast nearby enemies in a lethal Blood Nova
-  const blastRadius = 330;
+  const blastRadius = 340;
   for (let i = state.enemies.length - 1; i >= 0; i--) {
     const e = state.enemies[i];
     const dist = Math.hypot(e.x - p.x, e.y - p.y);
     if (dist <= blastRadius) {
       const ang = Math.atan2(e.y - p.y, e.x - p.x);
-      window.damageEnemy(state, e, 110, ang, e.kind !== 'boss');
+      window.damageEnemy(state, e, 115, ang, e.kind !== 'boss');
     }
   }
   return true;
@@ -535,15 +620,13 @@ window.performForbiddenSacrificeWorld = function(state) {
 
 window.findNearestInteractable = function(state) {
   const p = state.player;
-  // 1. Staggered enemy ready for Ritual Execution
   for (const e of state.enemies) {
     if (e.staggered && Math.hypot(e.x - p.x, e.y - p.y) <= 115) {
       return { kind: 'execute', enemy: e };
     }
   }
-  // 2. Intact Seal Altar
   for (const s of state.seals) {
-    if (!s.broken && Math.hypot(s.x - p.x, s.y - p.y) <= 110) {
+    if (!s.broken && Math.hypot(s.x - p.x, s.y - p.y) <= 115) {
       return { kind: 'seal', seal: s };
     }
   }
@@ -553,14 +636,12 @@ window.findNearestInteractable = function(state) {
 window.updateAsylumWorld = function(state, rawDt, moveVec, aimVec) {
   if (state.mode !== 'play' && state.mode !== 'ritual') return;
 
-  // Extreme horror slow-motion during Ritual Math Solving so monsters crawl dreadfully!
   state.worldTimeScale = state.mode === 'ritual' ? 0.035 : 1.0;
   const dt = rawDt * state.worldTimeScale;
   state.time += rawDt;
 
   const p = state.player;
 
-  // Timers decay in play time
   if (state.bannerTimer > 0) state.bannerTimer = Math.max(0, state.bannerTimer - rawDt);
   if (state.damageFlash > 0) state.damageFlash = Math.max(0, state.damageFlash - rawDt * 2.4);
   if (state.jumpscareTimer > 0) state.jumpscareTimer = Math.max(0, state.jumpscareTimer - rawDt);
@@ -582,29 +663,71 @@ window.updateAsylumWorld = function(state, rawDt, moveVec, aimVec) {
       if (state.stats.comboTimer <= 0) state.stats.combo = 0;
     }
 
-    // Flashlight sanity gentle drain & slow regen when UV flare active
-    p.sanity = Math.max(8, Math.min(p.maxSanity, p.sanity - dt * 1.1));
+    p.sanity = Math.max(12, Math.min(p.maxSanity, p.sanity - dt * 0.95));
 
-    // Aim angle
     if (aimVec && Math.hypot(aimVec.x, aimVec.y) > 0.15) {
       p.aimAngle = Math.atan2(aimVec.y, aimVec.x);
-    } else if (Math.hypot(moveVec.x, moveVec.y) > 0.25) {
+    } else if (Math.hypot(moveVec.x, moveVec.y) > 0.22) {
       p.aimAngle = Math.atan2(moveVec.y, moveVec.x);
     }
 
-    // Player movement
+    // Compute live Orthonormal Coordinates (X, Y) and Curve calculus state
+    const mCoord = window.worldToMath(p.x, p.y);
+    p.mathX = mCoord.X;
+    p.mathY = mCoord.Y;
+    p.curveY = window.evalCurveF(p.mathX);
+    p.derivFPrime = window.evalCurveFPrime(p.mathX);
+    p.derivFSecond = window.evalCurveFSecond(p.mathX);
+
+    // Check if Survivor is walking directly on (Cf) or on a constructed Tangent Bridge (T)
+    let onBridge = false;
+    for (const tb of state.tangentBridges) {
+      if (Math.abs(p.mathX - tb.x0) <= tb.span) {
+        const ty = tb.y0 + tb.slope * (p.mathX - tb.x0);
+        if (Math.abs(p.mathY - ty) < 0.75) {
+          onBridge = true;
+          break;
+        }
+      }
+    }
+    p.onCurveBonus = Math.abs(p.mathY - p.curveY) < 0.72 || onBridge;
+    if (p.onCurveBonus) {
+      p.sanity = Math.min(p.maxSanity, p.sanity + dt * 2.2);
+    }
+
+    // Player movement with Curve Traction bonus when walking along (Cf) or (T)
     if (p.dashTimer > 0) {
       p.dashTimer -= dt;
       p.x += p.dashVx * dt;
       p.y += p.dashVy * dt;
-      if (Math.random() < 0.5) window.addBloodDecal(state, p.x, p.y, 10, 'blood');
     } else {
-      const spd = p.speed * (p.frenzyTimer > 0 ? 1.25 : 1.0);
+      const curveBoost = p.onCurveBonus ? 1.18 : 1.0;
+      const spd = p.speed * (p.frenzyTimer > 0 ? 1.25 : 1.0) * curveBoost;
       p.x += moveVec.x * spd * dt;
       p.y += moveVec.y * spd * dt;
+      if (Math.hypot(moveVec.x, moveVec.y) > 0.1) {
+        p.walkCycle += dt * 11 * curveBoost;
+      }
     }
+
     for (const pil of state.pillars) resolveCircleRect(p, pil);
     clampToAsylum(p);
+
+    // Update Verlet cloth coat nodes trailing behind Survivor
+    if (p.coatNodes && p.coatNodes.length) {
+      p.coatNodes[0].x = p.x - Math.cos(p.aimAngle) * 8;
+      p.coatNodes[0].y = p.y - Math.sin(p.aimAngle) * 8;
+      for (let c = 1; c < p.coatNodes.length; c++) {
+        const prev = p.coatNodes[c - 1];
+        const cur = p.coatNodes[c];
+        const dx = cur.x - prev.x;
+        const dy = cur.y - prev.y;
+        const d = Math.hypot(dx, dy) || 1;
+        const targetDist = 11;
+        cur.x = prev.x + (dx / d) * targetDist - Math.cos(p.aimAngle) * 1.4;
+        cur.y = prev.y + (dy / d) * targetDist + Math.sin(state.time * 9 + c) * 0.9;
+      }
+    }
 
     // Pickup collection
     for (let i = state.pickups.length - 1; i >= 0; i--) {
@@ -615,23 +738,23 @@ window.updateAsylumWorld = function(state, rawDt, moveVec, aimVec) {
           window.addFloatingText(state, p.x, p.y - 24, '+22 دم', '#f87171', 1.0);
         } else {
           p.sanity = Math.min(p.maxSanity, p.sanity + 32);
-          window.addFloatingText(state, p.x, p.y - 24, '+32% مصباح', '#34d399', 1.0);
+          window.addFloatingText(state, p.x, p.y - 24, '+32% طاقة المعلم', '#34d399', 1.0);
         }
         window.HorrorAudio?.playUiTick?.();
         state.pickups.splice(i, 1);
       }
     }
 
-    // Spawner (cap max simultaneous enemies at 11 for buttery 60FPS even on weak CPUs)
+    // Spawner (cap max simultaneous enemies at 10 for locked 60FPS)
     state.spawnTimer -= dt;
-    const cap = state.bossSpawned ? 8 : 7 + state.stats.brokenSeals;
+    const cap = state.bossSpawned ? 8 : 6 + state.stats.brokenSeals;
     if (state.spawnTimer <= 0 && state.enemies.length < cap) {
       window.spawnAsylumEnemy(state);
-      state.spawnTimer = Math.max(1.3, 3.0 - state.stats.brokenSeals * 0.38);
+      state.spawnTimer = Math.max(1.35, 3.0 - state.stats.brokenSeals * 0.35);
     }
   }
 
-  // Update player blood bolts
+  // Update player projectiles
   for (let i = state.projectiles.length - 1; i >= 0; i--) {
     const b = state.projectiles[i];
     b.x += b.vx * dt;
@@ -679,13 +802,13 @@ window.updateAsylumWorld = function(state, rawDt, moveVec, aimVec) {
     if (rm) state.enemyProjectiles.splice(i, 1);
   }
 
-  // Update enemies & measure closest threat for heartbeat horror
+  // Update enemies & Boss multi-segment centipede kinematics
   let nearestEnemyDist = 9999;
   const enemySlowFactor = p.flareTimer > 0 ? 0.42 : 1.0;
 
   for (const e of state.enemies) {
     e.hitFlash = Math.max(0, e.hitFlash - dt);
-    e.twitchPhase += rawDt * 7.5;
+    e.twitchPhase += rawDt * 8.0;
     const dx = p.x - e.x;
     const dy = p.y - e.y;
     const dist = Math.hypot(dx, dy);
@@ -698,7 +821,22 @@ window.updateAsylumWorld = function(state, rawDt, moveVec, aimVec) {
       for (const pil of state.pillars) resolveCircleRect(e, pil);
       clampToAsylum(e);
 
-      // Boss ranged blood volley
+      // Update boss centipede body segments
+      if (e.segments && e.segments.length) {
+        let leadX = e.x;
+        let leadY = e.y;
+        for (const seg of e.segments) {
+          const sdx = seg.x - leadX;
+          const sdy = seg.y - leadY;
+          const sd = Math.hypot(sdx, sdy) || 1;
+          const gap = 26;
+          seg.x = leadX + (sdx / sd) * gap;
+          seg.y = leadY + (sdy / sd) * gap;
+          leadX = seg.x;
+          leadY = seg.y;
+        }
+      }
+
       if (e.kind === 'boss') {
         e.shootTimer -= dt;
         if (e.shootTimer <= 0) {
@@ -716,7 +854,6 @@ window.updateAsylumWorld = function(state, rawDt, moveVec, aimVec) {
         }
       }
 
-      // Melee bite damage
       if (!e.staggered && dist <= p.radius + e.radius + 3 && p.invulnTimer <= 0) {
         p.hp = Math.max(0, p.hp - e.dmg);
         p.sanity = Math.max(6, p.sanity - 8);
@@ -735,7 +872,6 @@ window.updateAsylumWorld = function(state, rawDt, moveVec, aimVec) {
     }
   }
 
-  // Dynamic Horror Heartbeat Audio when monster approaches or HP low
   const threatFactor = Math.max(nearestEnemyDist < 340 ? (340 - nearestEnemyDist) / 340 : 0, p.hp < 40 ? (40 - p.hp) / 40 : 0);
   if (threatFactor > 0.15) {
     state.heartbeatTimer -= rawDt;
@@ -745,10 +881,8 @@ window.updateAsylumWorld = function(state, rawDt, moveVec, aimVec) {
     }
   }
 
-  // Seal rings pulse
   for (const s of state.seals) s.pulse += rawDt * 2.4;
 
-  // Gore particles update
   for (let i = state.particles.length - 1; i >= 0; i--) {
     const pt = state.particles[i];
     pt.x += pt.vx * dt;
@@ -759,7 +893,6 @@ window.updateAsylumWorld = function(state, rawDt, moveVec, aimVec) {
     if (pt.life <= 0) state.particles.splice(i, 1);
   }
 
-  // Floating text popups
   for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
     const ft = state.floatingTexts[i];
     ft.y -= 26 * rawDt;

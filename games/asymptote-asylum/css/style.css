@@ -51,6 +51,29 @@ bdi.math-ltr {
   margin-inline: 2px;
 }
 
+.katex-bdi {
+  display: inline-block;
+  direction: ltr;
+  unicode-bidi: isolate;
+  margin-inline: 2px;
+  vertical-align: middle;
+}
+
+.katex-display-bdi {
+  display: block;
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: center;
+  margin: 6px 0;
+  overflow-x: auto;
+}
+
+.coord-katex-pill {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.42);
+  color: #e0f2fe;
+}
+
 /* Main 2D Canvas */
 #gameCanvas {
   display: block;
@@ -690,7 +713,8 @@ bdi.math-ltr {
     font-size: 10.5px;
   }
 
-  .gp-pill {
+  .gp-pill,
+  .coord-katex-pill {
     display: none;
   }
 

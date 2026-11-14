@@ -1,46 +1,75 @@
 /**
- * Sequence Strider - 2D Side-View Momentum Platformer & Suite Reactor Simulation
- * Implements M (upper majorant bound), m (lower minorant bound), stepped sequence platforms,
- * 4 Sector Override Gates, Converging/Oscillating Sequence Drones, and the Fixed-Point Boss Core.
+ * Sequence Strider - 2D Discrete Coordinate Plane (n, u_n), Squeeze Corridor & Cobweb Simulation
+ * Implements M (upper majorant bound y = 5), m (lower minorant bound y = -1), Limit Line y = L = 2,
+ * Induction Domino Pillars P(n) => P(n+1), 4 Sector Gates, Articulated Cyber-Runner, and Fixed-Point Boss Core.
  */
 
 window.SEQ_WORLD = {
   WIDTH: 2560,
   HEIGHT: 760,
-  BOUND_M: 66,   // Upper laser ceiling y = M
-  BOUND_m: 704,  // Lower abyss floor y = m
+  BOUND_M: 66,    // Upper laser ceiling y = M = 5
+  BOUND_m: 704,   // Lower abyss floor y = m = -1
+  LIMIT_Y: 385,   // Limit line y = L = 2.0
   GRAVITY: 1480,
-  MAX_PARTICLES: 130
+  MAX_PARTICLES: 130,
+
+  worldToSeq(wx, wy) {
+    const n = Math.max(0, Math.min(20, Math.round((wx - 80) / 120)));
+    const ratio = (window.SEQ_WORLD.BOUND_m - wy) / (window.SEQ_WORLD.BOUND_m - window.SEQ_WORLD.BOUND_M);
+    const un = -1 + ratio * 6; // m = -1 .. M = 5, with L = 2 at middle
+    return { n, un };
+  },
+
+  seqToWorldY(val) {
+    const ratio = (val - (-1)) / 6;
+    return window.SEQ_WORLD.BOUND_m - ratio * (window.SEQ_WORLD.BOUND_m - window.SEQ_WORLD.BOUND_M);
+  }
 };
 
 window.createInitialStriderState = function(topicFilter = 'all') {
   const sectors = window.SEQ_SECTORS || [];
 
-  // Platforms mapped across the 4 Sequence Sectors (with slight oscillating alternating platforms!)
+  // Platforms mapped across the 4 Sequence Sectors (with oscillating alternating platforms!)
   const platforms = [
     // Starting Sector 1 Launchpad & Induction Steps (0 .. 640)
-    { x: 60, y: 540, w: 300, h: 20, label: 'u₀', oscAmp: 0, oscFreq: 0, baseY: 540 },
-    { x: 390, y: 455, w: 190, h: 18, label: 'u₁', oscAmp: 0, oscFreq: 0, baseY: 455 },
-    { x: 220, y: 345, w: 170, h: 18, label: 'u₂', oscAmp: 14, oscFreq: 1.8, baseY: 345 },
-    { x: 460, y: 300, w: 210, h: 20, label: 'P(n+1)', oscAmp: 0, oscFreq: 0, baseY: 300 },
+    { x: 60, y: 540, w: 300, h: 20, label: 'u₀ = 0.5', oscAmp: 0, oscFreq: 0, baseY: 540 },
+    { x: 390, y: 455, w: 190, h: 18, label: 'u₁ = f(u₀)', oscAmp: 0, oscFreq: 0, baseY: 455 },
+    { x: 220, y: 345, w: 170, h: 18, label: 'u₂ = f(u₁)', oscAmp: 14, oscFreq: 1.8, baseY: 345 },
+    { x: 460, y: 300, w: 210, h: 20, label: 'P(n) ⇒ P(n+1)', oscAmp: 0, oscFreq: 0, baseY: 300 },
 
     // Sector 2 Arithmetic & Geometric Bridge (700 .. 1280)
-    { x: 710, y: 470, w: 190, h: 18, label: '+r', oscAmp: 0, oscFreq: 0, baseY: 470 },
-    { x: 940, y: 390, w: 180, h: 18, label: '×q', oscAmp: 18, oscFreq: 2.2, baseY: 390 },
-    { x: 830, y: 245, w: 165, h: 18, label: 'vₙ', oscAmp: 0, oscFreq: 0, baseY: 245 },
-    { x: 1090, y: 300, w: 210, h: 20, label: 'Homographique', oscAmp: 0, oscFreq: 0, baseY: 300 },
+    { x: 710, y: 470, w: 190, h: 18, label: 'uₙ = u₀ + nr', oscAmp: 0, oscFreq: 0, baseY: 470 },
+    { x: 940, y: 390, w: 180, h: 18, label: 'vₙ = v₀·qⁿ', oscAmp: 18, oscFreq: 2.2, baseY: 390 },
+    { x: 830, y: 245, w: 165, h: 18, label: 'vₙ = uₙ - α', oscAmp: 0, oscFreq: 0, baseY: 245 },
+    { x: 1090, y: 300, w: 210, h: 20, label: '(auₙ+b)/(cuₙ+d)', oscAmp: 0, oscFreq: 0, baseY: 300 },
 
     // Sector 3 Squeeze Gendarme & Limits (1340 .. 1900)
     { x: 1340, y: 485, w: 195, h: 18, label: 'vₙ ≤ uₙ', oscAmp: 14, oscFreq: 2.0, baseY: 485 },
     { x: 1565, y: 385, w: 175, h: 18, label: 'uₙ ≤ wₙ', oscAmp: 0, oscFreq: 0, baseY: 385 },
-    { x: 1440, y: 240, w: 175, h: 18, label: '(-1)ⁿ/n', oscAmp: 22, oscFreq: 2.6, baseY: 240 },
-    { x: 1700, y: 310, w: 220, h: 20, label: 'Lim = L', oscAmp: 0, oscFreq: 0, baseY: 310 },
+    { x: 1440, y: 240, w: 175, h: 18, label: 'L + (-1)ⁿ/√n', oscAmp: 22, oscFreq: 2.6, baseY: 240 },
+    { x: 1700, y: 310, w: 220, h: 20, label: 'lim uₙ = L', oscAmp: 0, oscFreq: 0, baseY: 310 },
 
     // Sector 4 Fixed-Point Boss Arena (1960 .. 2480)
-    { x: 1960, y: 515, w: 500, h: 22, label: 'I = [m, M]', oscAmp: 0, oscFreq: 0, baseY: 515 },
-    { x: 2010, y: 370, w: 170, h: 18, label: 'f(L)=L', oscAmp: 12, oscFreq: 1.9, baseY: 370 },
-    { x: 2250, y: 310, w: 220, h: 20, label: 'Noyau L', oscAmp: 0, oscFreq: 0, baseY: 310 }
+    { x: 1960, y: 515, w: 500, h: 22, label: 'f(I) ⊂ I = [m, M]', oscAmp: 0, oscFreq: 0, baseY: 515 },
+    { x: 2010, y: 370, w: 170, h: 18, label: 'f(L) = L', oscAmp: 12, oscFreq: 1.9, baseY: 370 },
+    { x: 2250, y: 310, w: 220, h: 20, label: 'Noyau L = 2', oscAmp: 0, oscFreq: 0, baseY: 310 }
   ];
+
+  // Discrete Index Pillars n = 0 .. 20 along the horizontal axis
+  const termPillars = [];
+  for (let n = 0; n <= 20; n++) {
+    const x = 80 + n * 120;
+    const damp = Math.pow(0.86, n);
+    const val = 2.0 + 2.2 * Math.cos(n * 0.95) * damp;
+    const topY = window.SEQ_WORLD.seqToWorldY(val);
+    termPillars.push({
+      n,
+      x,
+      val,
+      topY,
+      activated: n <= 1
+    });
+  }
 
   // 4 Sequence Gates positioned cleanly on major anchor platforms
   const gatePositions = [
@@ -73,13 +102,18 @@ window.createInitialStriderState = function(topicFilter = 'all') {
     { id: 4, x: 2100, y: 330, radius: 11, kind: 'hp' }
   ];
 
+  const scarfNodes = [];
+  for (let i = 0; i < 6; i++) {
+    scarfNodes.push({ x: 165 - i * 7, y: 472 });
+  }
+
   return {
     mode: 'intro', // 'intro' | 'play' | 'override' | 'pause' | 'end'
     topicFilter,
     time: 0,
     screenShake: 0,
     damageFlash: 0,
-    bannerText: 'القطاع 1 — اخترق البوابات الأربع بين المكبر M والمصغر m',
+    bannerText: 'القطاع 1 — اخترق البوابات الأربع بين المكبر M والمصغر m نحو النهاية L',
     bannerTimer: 4.5,
 
     player: {
@@ -90,6 +124,11 @@ window.createInitialStriderState = function(topicFilter = 'all') {
       radius: 17,
       facing: 1,
       aimAngle: 0,
+      walkCycle: 0,
+      scarfNodes,
+      currN: 1,
+      currUn: 1.1,
+      distToL: 0.9,
       hp: 100,
       maxHp: 100,
       energy: 100,
@@ -108,6 +147,7 @@ window.createInitialStriderState = function(topicFilter = 'all') {
     },
 
     platforms,
+    termPillars,
     gates,
     orbs,
     drones: [],
@@ -342,7 +382,7 @@ window.performOverdriveWorld = function(state) {
   window.SeqAudio?.playOverdrive?.();
   window.triggerStriderHaptic?.(140, 0.7, 0.85);
   window.spawnSeqParticles(state, p.x, p.y, 32, '#c084fc', 330);
-  window.setSectorBanner(state, '⚡ موجة الترجع الكبرى!', 2.2);
+  window.setSectorBanner(state, '⚡ موجة الترجع الكبرى P(n) ⇒ P(n+1)!', 2.2);
   window.addSeqFloatText(state, p.x, p.y + 38, '⚡ موجة الترجع', '#e9d5ff', 1.2);
 
   for (let i = state.drones.length - 1; i >= 0; i--) {
@@ -405,6 +445,7 @@ window.updateStriderWorld = function(state, rawDt, moveVec, aimVec) {
 
     if (Math.abs(moveVec.x) > 0.12) {
       p.facing = Math.sign(moveVec.x);
+      p.walkCycle += Math.abs(moveVec.x) * dt * 13.5;
     }
 
     if (aimVec && Math.hypot(aimVec.x, aimVec.y) > 0.16) {
@@ -431,6 +472,39 @@ window.updateStriderWorld = function(state, rawDt, moveVec, aimVec) {
     }
 
     p.x = Math.max(p.radius + 26, Math.min(window.SEQ_WORLD.WIDTH - p.radius - 26, p.x));
+
+    // Update live sequence coordinates (n, u_n)
+    const seqCoord = window.SEQ_WORLD.worldToSeq(p.x, p.y);
+    p.currN = seqCoord.n;
+    p.currUn = seqCoord.un;
+    p.distToL = Math.abs(seqCoord.un - 2.0);
+
+    // Activate Induction Domino Pillars P(n) => P(n+1) as player passes them
+    if (state.termPillars) {
+      for (const pil of state.termPillars) {
+        if (!pil.activated && p.x >= pil.x - 30) {
+          pil.activated = true;
+          state.stats.score += 15;
+          p.energy = Math.min(p.maxEnergy, p.energy + 3);
+        }
+      }
+    }
+
+    // Update Verlet neon scarf nodes
+    if (p.scarfNodes && p.scarfNodes.length > 0) {
+      p.scarfNodes[0].x = p.x - p.facing * 6;
+      p.scarfNodes[0].y = p.y - 6;
+      for (let i = 1; i < p.scarfNodes.length; i++) {
+        const prev = p.scarfNodes[i - 1];
+        const cur = p.scarfNodes[i];
+        const dx = cur.x - prev.x - p.facing * -5;
+        const dy = cur.y - prev.y + Math.sin(state.time * 9 + i) * 1.4;
+        const d = Math.hypot(dx, dy) || 1;
+        const targetDist = 6.5;
+        cur.x = prev.x + (dx / d) * targetDist;
+        cur.y = prev.y + (dy / d) * targetDist;
+      }
+    }
 
     // One-way cyber platform landing
     const wasGrounded = p.grounded;

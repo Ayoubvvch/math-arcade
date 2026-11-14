@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>مصحّة المشتقة — Asymptote Asylum | الغاية تبرر الوسيلة</title>
+  <title>مصحّة المقاربات — Asymptote Asylum | كابوس المعلم المتعامد (O, i, j)</title>
+  <link rel="stylesheet" href="../../shared/vendor/katex/katex.min.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <canvas id="gameCanvas" aria-label="ساحة مصحّة المشتقة الدموية"></canvas>
+  <canvas id="gameCanvas" aria-label="المعلم المتعامد الممنظم (O, i, j) والمنحنى (Cf)"></canvas>
 
-  <!-- TOP HORROR HUD -->
+  <!-- TOP HORROR & COORDINATE HUD -->
   <header class="hud-header">
     <div class="hud-vitals horror-panel">
       <div class="vital-block">
@@ -24,7 +25,7 @@
 
       <div class="vital-block">
         <div class="vital-row">
-          <span class="vital-label">الوعي / المصباح</span>
+          <span class="vital-label">طاقة المعلم</span>
           <span class="vital-num text-sanity math-ltr" id="sanityValue">100%</span>
         </div>
         <div class="bar-track">
@@ -33,7 +34,7 @@
       </div>
 
       <div class="stat-pill">
-        <span>الأختام:</span>
+        <span>العُقد:</span>
         <span class="text-seal math-ltr" id="sealsValue">0 / 4</span>
       </div>
 
@@ -42,13 +43,17 @@
         <span class="text-blood math-ltr" id="killValue">0</span>
       </div>
 
+      <div class="stat-pill coord-katex-pill" id="coordKaTeXBadge" title="الموضع الحالي والمشتقة في المعلم (O, i, j)">
+        <span id="coordLiveKaTeX"></span>
+      </div>
+
       <div class="stat-pill combo-badge hidden" id="comboBadge">
         <span>سلسلة ×</span>
         <span class="math-ltr" id="comboCount">2</span>
       </div>
 
       <div class="stat-pill frenzy-badge hidden" id="frenzyBadge">
-        <span>هيجان الدم</span>
+        <span>اشتقاق فائق</span>
         <span class="math-ltr" id="frenzyTimer">5s</span>
       </div>
     </div>
@@ -74,7 +79,7 @@
   </header>
 
   <!-- FLOATING WARD / BOSS BANNER -->
-  <div class="ward-banner" id="wardBanner">جناح المشرحة — حطّم الأختام الأربعة</div>
+  <div class="ward-banner" id="wardBanner">المعلم المتعامد الممنظم (O, i, j) — اسلك المنحنى (Cf) وحطّم العُقد الأربعة</div>
 
   <!-- MOBILE FLOATING STICK -->
   <div class="touch-joystick" id="touchJoystick" aria-hidden="true">
@@ -82,53 +87,53 @@
   </div>
 
   <!-- BOTTOM PLAYSTATION ACTION DECK -->
-  <nav class="bottom-deck horror-panel" aria-label="أدوات النجاة والقتال">
-    <button type="button" class="horror-btn action-chip" id="actSlash" title="ضربة منشار / إعدام دموي [✕ / J]">
+  <nav class="bottom-deck horror-panel" aria-label="أدوات المعلم والقتال">
+    <button type="button" class="horror-btn action-chip" id="actSlash" title="منشار المشتقة / تشريح الوحش المشلول [✕ / J]">
       <span class="ps-badge ps-x">✕</span>
-      <span>منشار / إعدام</span>
+      <span>منشار $f'(x)$</span>
     </button>
 
-    <button type="button" class="horror-btn action-chip" id="actDash" title="اندفاع دموي مع تفادي [◯ / Shift]">
+    <button type="button" class="horror-btn action-chip" id="actDash" title="اندفاع على طول متجهة المماس [◯ / Shift]">
       <span class="ps-badge ps-o">◯</span>
       <span>اندفاع</span>
     </button>
 
-    <button type="button" class="horror-btn action-chip" id="actRitual" title="فحص المذبح / بدء الطقس [▢ / L]">
+    <button type="button" class="horror-btn action-chip" id="actRitual" title="معايرة عقدة المعلم / تشريح [▢ / L]">
       <span class="ps-badge ps-sq">▢</span>
-      <span>طقس المذبح</span>
+      <span>معايرة العقدة</span>
     </button>
 
-    <button type="button" class="horror-btn action-chip" id="actFlare" title="شعلة UV لكشف الظلام وتجميد الوحوش [△ / Q]">
+    <button type="button" class="horror-btn action-chip" id="actFlare" title="انعكاس المنصف الأول y=x وكشف (Cf⁻¹) [△ / Q]">
       <span class="ps-badge ps-tri">△</span>
-      <span>شعلة</span>
+      <span>مرآة $y=x$</span>
     </button>
 
-    <button type="button" class="horror-btn action-chip" id="actBolt" title="إطلاق نصل الدم [R2 / Space]">
+    <button type="button" class="horror-btn action-chip" id="actBolt" title="إطلاق رمح القاطع [R2 / Space]">
       <span class="ps-badge ps-r2">R2</span>
-      <span>نصل</span>
+      <span>رمح القاطع</span>
     </button>
 
-    <button type="button" class="horror-btn action-chip" id="actSacrifice" title="تضحية محرّمة: الغاية تبرر الوسيلة [L2 / F]">
+    <button type="button" class="horror-btn action-chip" id="actSacrifice" title="بناء جسر المماس والتقريب التآلفي [L2 / F]">
       <span class="ps-badge ps-l2">L2</span>
-      <span>تضحية</span>
+      <span>جسر المماس $(T)$</span>
     </button>
   </nav>
 
   <!-- INTRO BRIEFING MODAL -->
   <section class="modal-backdrop" id="introModal" role="dialog" aria-modal="true" aria-labelledby="introTitle">
     <div class="modal-card horror-panel">
-      <h1 class="modal-title" id="introTitle">مصحّة المشتقة — <span>Asymptote Asylum</span></h1>
-      <p class="modal-subtitle">
-        استيقظت داخل جناح معزول تغمره الدماء ووحوش الفروع اللانهائية. لا مخرج إلا بتحطيم الأختام الأربعة عبر قواعد الاشتقاق ودراسة الدوال (23–38)، ثم سحق «شبح المقارب اللانهائي».
+      <h1 class="modal-title" id="introTitle">مصحّة المقاربات — <span>Asymptote Asylum</span></h1>
+      <p class="modal-subtitle" data-katex-mixed>
+        أنت محاصر داخل معلم متعامد ممنظم حيّ $(O,\vec{i},\vec{j})$ تتلوّى فيه المنحنيات $(C_f)$ وتتربص في فجواته عناكب النقط المزواة $(f'_d \neq f'_g)$ ووحوش المقاربات $(x = a)$. اسلك المنحنى $(C_f)$، شيّد جسور المماس $(T): y = f'(x_0)(x - x_0) + f(x_0)$، وحرّر العُقد الأربعة (البنود 23–38) لسحق «عملاق الفرع الشلجمي اللانهائي».
       </p>
 
-      <div class="philosophy-box">
-        <strong>🩸 عقيدة المصحّة — «الغاية تبرر الوسيلة»:</strong>
-        اشلل الوحوش بالمنشار <span class="math-ltr">[✕]</span> وأعدمها بالمعرفة الرياضية، أو اضغط <span class="math-ltr">[L2 / F]</span> للتضحية بالمساجين داخل الأقفاص أو بجزء من دمك لتفجير موجة دم قاتلة وتجاوز الطقوس المستحيلة!
+      <div class="philosophy-box" data-katex-mixed>
+        <strong>📐 صهر الرياضيات في المعلم الحي $(O,\vec{i},\vec{j})$:</strong>
+        السير فوق المنحنى $(C_f)$ أو فوق جسور المماس $(T)$ التي تبنيها بـ $[L2 / F]$ يمنحك سرعة إضافية ويشحن طاقة المعلم، وتفعيل مرآة المنصف الأول $\Delta: y = x$ بـ $[△]$ يُظهر منحنى الدالة العكسية $(C_{f^{-1}})$ ويشلّ وحوش الانعطاف!
       </div>
 
       <div>
-        <div class="stat-card-k" style="margin-bottom: 6px;">اختر محور الأسئلة المطلوب في الطقوس (◀ / ▶ لتغيير المحور):</div>
+        <div class="stat-card-k" style="margin-bottom: 6px;">اختر محور الأسئلة في عُقد المعلم (◀ / ▶ للتبديل):</div>
         <div class="filter-grid" id="introFilterGrid">
           <button type="button" class="horror-btn filter-btn active" data-filter="all">
             <span>الكل (23–38)</span>
@@ -146,26 +151,26 @@
       </div>
 
       <div class="legend-grid">
-        <div class="legend-item"><span class="ps-badge ps-x">✕</span> <span>ضربة منشار / إعدام الوحش المشلول [J]</span></div>
-        <div class="legend-item"><span class="ps-badge ps-sq">▢</span> <span>فتح طقس المذبح لتحطيم الختم [L]</span></div>
-        <div class="legend-item"><span class="ps-badge ps-o">◯</span> <span>اندفاع دموي سريع وتفادي الهجوم [Shift]</span></div>
-        <div class="legend-item"><span class="ps-badge ps-tri">△</span> <span>شعلة كاشفة وتبطيء الوحوش [Q]</span></div>
-        <div class="legend-item"><span class="ps-badge ps-r2">R2</span> <span>إطلاق نصل الدم [Space / كليك يسار]</span></div>
-        <div class="legend-item"><span class="ps-badge ps-l2">L2</span> <span>تضحية محرّمة: الغاية تبرر الوسيلة [F]</span></div>
+        <div class="legend-item" data-katex-mixed><span class="ps-badge ps-x">✕</span> <span>منشار المشتقة $f'(x)$ / تشريح الوحش المشلول [J]</span></div>
+        <div class="legend-item" data-katex-mixed><span class="ps-badge ps-sq">▢</span> <span>معايرة عقدة الانشقاق في $(O,\vec{i},\vec{j})$ [L]</span></div>
+        <div class="legend-item" data-katex-mixed><span class="ps-badge ps-o">◯</span> <span>اندفاع سريع على طول متجهة المماس [Shift]</span></div>
+        <div class="legend-item" data-katex-mixed><span class="ps-badge ps-tri">△</span> <span>انعكاس المنصف $\Delta: y = x$ وكشف $(C_{f^{-1}})$ [Q]</span></div>
+        <div class="legend-item" data-katex-mixed><span class="ps-badge ps-r2">R2</span> <span>إطلاق رمح القاطع [Space / كليك يسار]</span></div>
+        <div class="legend-item" data-katex-mixed><span class="ps-badge ps-l2">L2</span> <span>بناء جسر المماس $(T)$ والتقريب التآلفي [F]</span></div>
       </div>
 
       <button type="button" class="horror-btn cta-primary gp-focused" id="btnStartAsylum">
         <span>✕</span>
-        <span>دخول المصحّة — ابدأ النزيف والنجاة</span>
+        <span data-katex-mixed>دخول المعلم $(O,\vec{i},\vec{j})$ — ابدأ المواجهة</span>
       </button>
     </div>
   </section>
 
-  <!-- RITUAL EXECUTION / ALTAR CHALLENGE MODAL -->
+  <!-- COORDINATE CALIBRATION / EXECUTION MODAL -->
   <section class="modal-backdrop hidden" id="ritualModal" role="dialog" aria-modal="true" aria-labelledby="ritualPrompt">
     <div class="modal-card ritual-card horror-panel">
       <div class="ritual-header">
-        <span class="ritual-tag" id="ritualSourceTag">طقس المذبح — الختم 1/4</span>
+        <span class="ritual-tag" id="ritualSourceTag">معايرة العقدة — القطاع 1</span>
         <span class="ritual-topic" id="ritualTopicTag">البند 23</span>
       </div>
 
@@ -203,7 +208,7 @@
         </button>
 
         <button type="button" class="horror-btn btn-forbidden" id="btnForbiddenSacrifice">
-          <span>🩸 [L2 / F] الغاية تبرر الوسيلة: تضحية دموية لتجاوز الختم</span>
+          <span>⚡ [L2 / F] تقريب تآلفي فوري: بناء جسر المماس لتجاوز العقدة</span>
         </button>
       </div>
     </div>
@@ -212,14 +217,14 @@
   <!-- PAUSE MODAL -->
   <section class="modal-backdrop hidden" id="pauseModal" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
     <div class="modal-card horror-panel" style="max-width: 440px;">
-      <h2 class="modal-title" id="pauseTitle">توقف مؤقت — <span>المصحّة</span></h2>
-      <p class="modal-subtitle">استرجع أنفاسك أو بدّل محور أسئلة البكالوريا (23–38).</p>
+      <h2 class="modal-title" id="pauseTitle">توقف مؤقت — <span>المعلم المتعامد</span></h2>
+      <p class="modal-subtitle">استرجع أنفاسك أو بدّل محور أسئلة الاشتقاق ودراسة الدوال (23–38).</p>
 
       <div class="menu-stack">
-        <button type="button" class="horror-btn pause-menu-btn gp-focused" id="btnResumeGame">استئناف الصيد [◯ / Esc]</button>
+        <button type="button" class="horror-btn pause-menu-btn gp-focused" id="btnResumeGame">استئناف المسار [◯ / Esc]</button>
         <button type="button" class="horror-btn pause-menu-btn" id="btnCycleFilterPause">محور الأسئلة: الكل (23–38)</button>
         <button type="button" class="horror-btn pause-menu-btn" id="btnToggleSoundPause">الصوت: مفعل</button>
-        <button type="button" class="horror-btn pause-menu-btn" id="btnRestartPause">إعادة تشغيل المصحّة</button>
+        <button type="button" class="horror-btn pause-menu-btn" id="btnRestartPause">إعادة توليد المعلم</button>
         <a href="../../index.html?from=game" class="horror-btn pause-menu-btn" id="btnExitHubPause">العودة لـ PS5 Hub</a>
       </div>
     </div>
@@ -228,35 +233,37 @@
   <!-- VICTORY / DEATH END MODAL -->
   <section class="modal-backdrop hidden" id="endModal" role="dialog" aria-modal="true" aria-labelledby="endTitle">
     <div class="modal-card horror-panel" style="max-width: 500px;">
-      <h2 class="modal-title" id="endTitle">سقطت في <span>الظلام</span></h2>
+      <h2 class="modal-title" id="endTitle">استقرار <span>المعلم</span></h2>
       <p class="modal-subtitle" id="endSubtitle"></p>
 
       <div class="stats-summary-grid">
         <div class="stat-card">
-          <span class="stat-card-k">الأختام المحطمة</span>
+          <span class="stat-card-k">العُقد المعايرة</span>
           <span class="stat-card-v text-seal math-ltr" id="endSeals">0 / 4</span>
         </div>
         <div class="stat-card">
-          <span class="stat-card-k">الوحوش المذبوحة</span>
+          <span class="stat-card-k">وحوش المنحنى المقطعة</span>
           <span class="stat-card-v text-blood math-ltr" id="endKills">0</span>
         </div>
         <div class="stat-card">
-          <span class="stat-card-k">دقة المعرفة الرياضية</span>
+          <span class="stat-card-k">دقة الاشتقاق والدوال</span>
           <span class="stat-card-v text-sanity math-ltr" id="endAccuracy">100%</span>
         </div>
         <div class="stat-card">
-          <span class="stat-card-k">قرابين «الغاية تبرر الوسيلة»</span>
+          <span class="stat-card-k">جسور المماس $(T)$ المبنية</span>
           <span class="stat-card-v text-purple math-ltr" id="endSacrifices">0</span>
         </div>
       </div>
 
       <div class="menu-stack">
-        <button type="button" class="horror-btn cta-primary end-menu-btn gp-focused" id="btnRetryEnd">✕ دخول جديد للمصحّة</button>
+        <button type="button" class="horror-btn cta-primary end-menu-btn gp-focused" id="btnRetryEnd">✕ جولة جديدة في المعلم</button>
         <a href="../../index.html?from=game" class="horror-btn end-menu-btn" id="btnHubEnd">◯ العودة لـ PS5 Hub</a>
       </div>
     </div>
   </section>
 
+  <script src="../../shared/vendor/katex/katex.min.js"></script>
+  <script src="../../shared/katex-kit.js"></script>
   <script src="js/curriculum.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/world.js"></script>

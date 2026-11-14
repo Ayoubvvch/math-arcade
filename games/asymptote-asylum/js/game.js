@@ -1,5 +1,6 @@
 /**
- * Asymptote Asylum (مصحّة المشتقة: الغاية تبرر الوسيلة) - Main Game Loop & Ritual UI Orchestrator
+ * Asymptote Asylum (مصحّة المقاربات: كابوس المعلم المتعامد (O, i, j))
+ * Main 60FPS Game Loop, Live KaTeX Coordinate Scanner & Calibration Orchestrator
  */
 
 (function() {
@@ -46,15 +47,11 @@
 
   window.cycleTopicFilter = function(dir = 1) {
     const idx = FILTER_MODES.findIndex(f => f.key === state.topicFilter);
-    const nextIdx = (idx + dir + FILTER_ORDER_LEN()) % FILTER_ORDER_LEN();
+    const nextIdx = (idx + dir + FILTER_MODES.length) % FILTER_MODES.length;
     state.topicFilter = FILTER_MODES[nextIdx].key;
     updateFilterUI();
     window.HorrorAudio?.playUiTick?.();
   };
-
-  function FILTER_ORDER_LEN() {
-    return FILTER_MODES.length;
-  }
 
   window.startAsylumFromIntro = function() {
     window.HorrorAudio?.init?.();
@@ -62,7 +59,7 @@
     document.getElementById('introModal')?.classList.add('hidden');
     state.mode = 'play';
     window.lockAsylumInputBriefly(220);
-    window.setWardBanner(state, 'حطّم الأختام الأربعة حول المصحّة [▢ / L] عند المذبح', 4.5);
+    window.setWardBanner(state, 'اسلك المنحنى (Cf) في المعلم (O,i,j) وحرّر العُقد الأربعة [▢ / L]', 4.5);
   };
 
   window.triggerNearestInteract = function(s) {
@@ -71,49 +68,20 @@
       window.openRitualChallenge(s, target);
       return true;
     }
-    window.addFloatingText(s, s.player.x, s.player.y - 26, 'اقترب من مذبح أو وحش مشلول!', '#fbbf24', 1.1);
+    window.addFloatingText(s, s.player.x, s.player.y - 26, 'اقترب من عقدة المعلم أو وحش مشلول!', '#fbbf24', 1.1);
     return false;
   };
 
+  /**
+   * Renders mixed Arabic + LaTeX ($...$) strings via KaTeX.
+   */
   function setBidiSafeMath(el, text) {
     if (!el) return;
-    el.textContent = '';
-    const str = String(text || '');
-    const mathRe = /(?:[+\-](?=[A-Za-z0-9\u00C0-\u024F\]\[(){}|√ⁿʳˣᵖ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻₀₁₂₃₄₅₆₇₈₉₊₋ₙₚΩΔαβπℚℝℕ∞∀∃∈∉⊂⊃∪∩→↔⇒⇔≤≥≠·×÷±≈'′∘^_\\])|[A-Za-z0-9\u00C0-\u024F\]\[(){}|√ⁿʳˣᵖ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻₀₁₂₃₄₅₆₇₈₉₊₋ₙₚΩΔαβπℚℝℕ∞∀∃∈∉⊂⊃∪∩→↔⇒⇔≤≥≠·×÷±≈'′∘^_\\])(?:[ +\-*/=<>≤≥≠∈∉⊂⊃∪∩∀∃→↔⇒⇔·×÷±≈'′∘^_:,.\\]*[A-Za-z0-9\u00C0-\u024F\]\[(){}|√ⁿʳˣᵖ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻₀₁₂₃₄₅₆₇₈₉₊₋ₙₚΩΔαβπℚℝℕ∞∀∃∈∉⊂⊃∪∩→↔⇒⇔≤≥≠·×÷±≈'′∘^_\\])*/g;
-    let lastIndex = 0;
-    let match;
-    while ((match = mathRe.exec(str)) !== null) {
-      let sIdx = match.index;
-      let eIdx = match.index + match[0].length;
-      while (eIdx > sIdx) {
-        const sub = str.slice(sIdx, eIdx);
-        const op = (sub.match(/\(/g) || []).length;
-        const cl = (sub.match(/\)/g) || []).length;
-        if ((sub.endsWith('(') && op > cl) || (sub.endsWith(')') && cl > op) || /\s$/.test(sub)) eIdx--;
-        else break;
-      }
-      while (sIdx < eIdx) {
-        const sub = str.slice(sIdx, eIdx);
-        const op = (sub.match(/\(/g) || []).length;
-        const cl = (sub.match(/\)/g) || []).length;
-        if ((sub.startsWith('(') && op > cl) || (sub.startsWith(')') && cl > op) || /^\s/.test(sub)) sIdx++;
-        else break;
-      }
-      const tok = str.slice(sIdx, eIdx);
-      if (!tok || /^[()\[\]\s]+$/.test(tok)) continue;
-      if (sIdx > lastIndex) {
-        el.appendChild(document.createTextNode(str.slice(lastIndex, sIdx)));
-      }
-      const bdi = document.createElement('bdi');
-      bdi.dir = 'ltr';
-      bdi.className = 'math-ltr';
-      bdi.textContent = tok;
-      el.appendChild(bdi);
-      lastIndex = eIdx;
+    if (window.MathKaTeX && typeof window.MathKaTeX.renderMixed === 'function') {
+      window.MathKaTeX.renderMixed(el, text);
+      return;
     }
-    if (lastIndex < str.length) {
-      el.appendChild(document.createTextNode(str.slice(lastIndex)));
-    }
+    el.textContent = String(text || '');
   }
   window.setBidiSafeMath = setBidiSafeMath;
 
@@ -143,11 +111,11 @@
     const hintBox = document.getElementById('ritualHintBox');
 
     if (targetInfo.kind === 'seal') {
-      srcTag.textContent = `طقس المذبح — ${targetInfo.seal.wardName}`;
+      setBidiSafeMath(srcTag, `معايرة العقدة — ${targetInfo.seal.wardName}`);
     } else {
-      srcTag.textContent = `إعدام دموي — ${targetInfo.enemy.name}`;
+      setBidiSafeMath(srcTag, `تشريح مشتق — ${targetInfo.enemy.name}`);
     }
-    topTag.textContent = `البند ${q.topic}: ${window.CURRICULUM_TOPICS[q.topic] || ''}`;
+    setBidiSafeMath(topTag, `البند ${q.topic}: ${window.CURRICULUM_TOPICS[q.topic] || ''}`);
     setBidiSafeMath(promptEl, q.prompt);
 
     if (q.graphSpec) {
@@ -165,23 +133,22 @@
       btn.classList.remove('opt-correct', 'opt-wrong');
       btn.disabled = false;
       const optSpan = btn.querySelector('.opt-text');
-      optSpan.classList.remove('math-ltr');
       setBidiSafeMath(optSpan, q.options[i] || '');
     }
 
-    // Check "الغاية تبرر الوسيلة" availability
+    // Check Tangent Linearization Overdrive [L2 / F] availability
     const p = s.player;
-    const nearCaptive = s.captives.find(c => c.alive && Math.hypot(c.x - p.x, c.y - p.y) <= 260);
+    const nearForge = s.captives.find(c => c.alive && Math.hypot(c.x - p.x, c.y - p.y) <= 260);
     const sacBtn = document.getElementById('btnForbiddenSacrifice');
-    if (nearCaptive) {
+    if (nearForge) {
       sacBtn.disabled = false;
-      sacBtn.textContent = `🩸 [L2 / F] الغاية تبرر الوسيلة: قربان (${nearCaptive.label}) لكسر الختم فوراً (+15 دم)`;
+      setBidiSafeMath(sacBtn, `⚡ [L2 / F] تقريب تآلفي عند $x_0 = ${nearForge.x0}$ لبناء جسر المماس $y=f'(x_0)(x-x_0)+f(x_0)$ (+15 دم)`);
     } else if (p.hp > 26) {
       sacBtn.disabled = false;
-      sacBtn.textContent = `🩸 [L2 / F] الغاية تبرر الوسيلة: ادفع 25 من دمك لتجاوز الطقس فوراً`;
+      setBidiSafeMath(sacBtn, `⚡ [L2 / F] تقريب تآلفي فوري: شحن المشتقة $f'(x_0)$ لتجاوز العقدة (-20 دم)`);
     } else {
       sacBtn.disabled = true;
-      sacBtn.textContent = `🩸 [L2 / F] الدم غير كافٍ للتضحية (تحتاج > 25 دم أو سجين قريب)`;
+      sacBtn.textContent = `⚡ [L2 / F] الطاقة الحيوية غير كافية للتقريب التآلفي الفوري`;
     }
 
     modal.classList.remove('hidden');
@@ -226,25 +193,28 @@
   window.triggerForbiddenRitualBypass = function() {
     if (state.mode !== 'ritual' || !state.activeRitual) return;
     const p = state.player;
-    const nearCaptive = state.captives.find(c => c.alive && Math.hypot(c.x - p.x, c.y - p.y) <= 260);
-    if (!nearCaptive && p.hp <= 26) return;
+    const nearForge = state.captives.find(c => c.alive && Math.hypot(c.x - p.x, c.y - p.y) <= 260);
+    if (!nearForge && p.hp <= 26) return;
 
     state.stats.sacrifices++;
     window.HorrorAudio?.playSacrifice?.();
     window.triggerGamepadHaptic?.(160, 0.85, 0.95);
 
-    if (nearCaptive) {
-      nearCaptive.alive = false;
+    // Also spawn a Tangent Line Bridge in the coordinate world at player's x0
+    const x0 = p.mathX;
+    const y0 = window.evalCurveF(x0);
+    const slope = window.evalCurveFPrime(x0);
+    state.tangentBridges.push({ x0, y0, slope, span: 2.8, timer: 20, permanent: false });
+
+    if (nearForge) {
+      nearForge.alive = false;
       p.hp = Math.min(p.maxHp, p.hp + 15);
-      window.addBloodDecal(state, nearCaptive.x, nearCaptive.y, 48, 'blood');
-      window.addBloodDecal(state, nearCaptive.x, nearCaptive.y, 24, 'bones');
-      window.spawnGoreParticles(state, nearCaptive.x, nearCaptive.y, 32, '#ef4444', 320);
-      window.addFloatingText(state, nearCaptive.x, nearCaptive.y - 24, 'قربان الغاية تبرر الوسيلة!', '#f87171', 1.8);
+      window.spawnGoreParticles(state, nearForge.x, nearForge.y, 28, '#38bdf8', 320);
+      window.addFloatingText(state, nearForge.x, nearForge.y - 24, 'جسر التقريب التآلفي (T)!', '#38bdf8', 1.8);
     } else {
-      p.hp -= 25;
-      window.addBloodDecal(state, p.x, p.y, 36, 'blood');
+      p.hp -= 20;
       window.spawnGoreParticles(state, p.x, p.y, 24, '#dc2626', 280);
-      window.addFloatingText(state, p.x, p.y - 24, 'عهد الدم -25 HP!', '#f87171', 1.6);
+      window.addFloatingText(state, p.x, p.y - 24, 'شحن المشتقة -20 دم!', '#f87171', 1.6);
     }
 
     p.frenzyTimer = Math.max(p.frenzyTimer, 6.0);
@@ -271,9 +241,8 @@
         state.stats.score += wasSacrifice ? 350 : 600;
         window.HorrorAudio?.playSealBreak?.();
         window.spawnGoreParticles(state, s.x, s.y, 28, s.color, 260);
-        window.addFloatingText(state, s.x, s.y - 36, `تم تحطيم الختم (${state.stats.brokenSeals}/4)!`, '#fbbf24', 1.9);
+        window.addFloatingText(state, s.x, s.y - 36, `تمت معايرة العقدة (${state.stats.brokenSeals}/4)!`, '#fbbf24', 1.9);
 
-        // Reward survivor sanity & slight HP on clean solve
         if (!wasSacrifice) {
           state.player.sanity = Math.min(state.player.maxSanity, state.player.sanity + 35);
           state.player.hp = Math.min(state.player.maxHp, state.player.hp + 15);
@@ -282,7 +251,7 @@
         if (state.stats.brokenSeals >= 4) {
           window.spawnBossFiend(state);
         } else {
-          window.setWardBanner(state, `بقي ${4 - state.stats.brokenSeals} أختام في المصحّة — واصل الصيد`, 3.5);
+          window.setWardBanner(state, `بقي ${4 - state.stats.brokenSeals} عُقد في المعلم (O,i,j) — واصل المسار`, 3.5);
         }
       }
     } else if (info.kind === 'execute' && info.enemy) {
@@ -321,16 +290,11 @@
     const sub = document.getElementById('endSubtitle');
 
     if (victory) {
-      if (s.stats.sacrifices >= 2) {
-        title.innerHTML = 'نجوت بدم الآخرين — <span>نهاية «الغاية تبرر الوسيلة»</span>';
-        sub.textContent = 'تحطّمت كل الأختام وتمزق شبح المقارب اللانهائي... لكن دماء القرابين ستلاحقك خارج المصحّة للأبد.';
-      } else {
-        title.innerHTML = 'انتصار العقل والنجاة — <span>نهاية المصحّة النقية</span>';
-        sub.textContent = 'أتقنت كل قواعد الاشتقاق ودراسة الدوال (23–38) وسحقت وحوش المصحّة دون التفريط بإنسانيتك!';
-      }
+      title.innerHTML = 'سيطرة كاملة على <span>المعلم المتعامد (O, i, j)</span>';
+      setBidiSafeMath(sub, 'أتقنت كل قواعد الاشتقاق ودراسة الدوال $(23\\text{–}38)$، شيّدت جسور المماس $(T)$، وسحقت عملاق الفرع الشلجمي اللانهائي!');
     } else {
-      title.innerHTML = 'التهمك الظلام في <span>مصحّة المشتقة</span>';
-      sub.textContent = 'توقفت نبضات قلبك قبل تحرير الأختام الأربعة. حاول مجدداً واستعمل الشعلة والتفادي والقرابين عند الحاجة!';
+      title.innerHTML = 'انشطار في <span>المعلم المتعامد</span>';
+      setBidiSafeMath(sub, 'انهارت طاقتك قبل معايرة العُقد الأربعة. اسلك المنحنى $(C_f)$ واستعمل جسور المماس $(T)$ ومرآة $y=x$ مجدداً!');
     }
 
     const acc = s.stats.questionsAnswered > 0
@@ -360,7 +324,7 @@
     window.asymptoteGame = state;
     hudCache = {};
     window.lockAsylumInputBriefly(220);
-    window.setWardBanner(state, 'جولة جديدة — حطّم الأختام الأربعة', 3.5);
+    window.setWardBanner(state, 'جولة جديدة في المعلم (O,i,j) — عاير العُقد الأربعة', 3.5);
   };
 
   // Wire static DOM buttons once
@@ -422,6 +386,14 @@
   document.getElementById('actBolt')?.addEventListener('click', () => state.mode === 'play' && window.performBloodBolt(state));
   document.getElementById('actSacrifice')?.addEventListener('click', () => state.mode === 'play' && window.performForbiddenSacrificeWorld(state));
 
+  // Render static KaTeX elements in Intro & Action Deck
+  window.MathKaTeX?.scanPage?.(document.body);
+  document.querySelectorAll('.action-chip span:last-child, .stat-card-k').forEach(el => {
+    if (el.textContent.includes('$')) {
+      window.MathKaTeX?.renderMixed?.(el, el.textContent);
+    }
+  });
+
   // Sync HUD lazily (zero unnecessary DOM writes)
   function syncHUD() {
     const p = state.player;
@@ -449,6 +421,25 @@
     if (hudCache.kills !== killStr) {
       hudCache.kills = killStr;
       document.getElementById('killValue').textContent = killStr;
+    }
+
+    // Live KaTeX Coordinate Scanner in (O, i, j)
+    const qx = Math.round(p.mathX * 5) / 5;
+    const qy = Math.round(p.mathY * 5) / 5;
+    const coordKey = `${qx.toFixed(1)},${qy.toFixed(1)}`;
+    if (hudCache.coordKey !== coordKey) {
+      hudCache.coordKey = coordKey;
+      const fp = p.derivFPrime.toFixed(2);
+      const mono = p.derivFPrime >= 0 ? '\\nearrow' : '\\searrow';
+      const conc = p.derivFSecond >= 0 ? '\\cup' : '\\cap';
+      const coordEl = document.getElementById('coordLiveKaTeX');
+      if (coordEl && window.MathKaTeX) {
+        window.MathKaTeX.renderLatex(
+          coordEl,
+          `M(${qx.toFixed(1)},${qy.toFixed(1)}) \\;\\vert\\; f'(${qx.toFixed(1)})=${fp}\\,${mono}\\,${conc}`,
+          false
+        );
+      }
     }
 
     const comboShow = state.stats.combo >= 2;
@@ -480,7 +471,6 @@
       }
     }
 
-    // Cooldown & Ready proximity highlights
     const nearInteract = state.mode === 'play' ? window.findNearestInteractable(state) : null;
     document.getElementById('actRitual')?.classList.toggle('highlight-ready', !!nearInteract);
     document.getElementById('actDash')?.classList.toggle('cooldown', p.dashCooldown > 0);
@@ -488,7 +478,6 @@
     document.getElementById('actSacrifice')?.classList.toggle('cooldown', p.sacrificeCooldown > 0);
   }
 
-  // Initialize Controls & Launch Main 60FPS Loop
   window.initAsylumControls(() => state);
   updateFilterUI();
 

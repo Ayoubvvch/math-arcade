@@ -50,39 +50,11 @@
 
   function setBidiSafeMath(el, text) {
     if (!el) return;
-    el.textContent = '';
-    const str = String(text || '');
-    const mathRe = /(?:[+\-](?=[A-Za-z0-9\u00C0-\u024F\]\[(){}|√ⁿʳˣᵖ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻₀₁₂₃₄₅₆₇₈₉₊₋ₙₚΩΔαβπℚℝℕ∞∀∃∈∉⊂⊃∪∩→↔⇒⇔≤≥≠·×÷±≈'′∘^_\\])|[A-Za-z0-9\u00C0-\u024F\]\[(){}|√ⁿʳˣᵖ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻₀₁₂₃₄₅₆₇₈₉₊₋ₙₚΩΔαβπℚℝℕ∞∀∃∈∉⊂⊃∪∩→↔⇒⇔≤≥≠·×÷±≈'′∘^_\\])(?:[ +\-*/=<>≤≥≠∈∉⊂⊃∪∩∀∃→↔⇒⇔·×÷±≈'′∘^_:,.\\]*[A-Za-z0-9\u00C0-\u024F\]\[(){}|√ⁿʳˣᵖ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻₀₁₂₃₄₅₆₇₈₉₊₋ₙₚΩΔαβπℚℝℕ∞∀∃∈∉⊂⊃∪∩→↔⇒⇔≤≥≠·×÷±≈'′∘^_\\])*/g;
-    let last = 0;
-    let m;
-    while ((m = mathRe.exec(str)) !== null) {
-      let sIdx = m.index;
-      let eIdx = m.index + m[0].length;
-      while (eIdx > sIdx) {
-        const sub = str.slice(sIdx, eIdx);
-        const op = (sub.match(/\(/g) || []).length;
-        const cl = (sub.match(/\)/g) || []).length;
-        if ((sub.endsWith('(') && op > cl) || (sub.endsWith(')') && cl > op) || /\s$/.test(sub)) eIdx--;
-        else break;
-      }
-      while (sIdx < eIdx) {
-        const sub = str.slice(sIdx, eIdx);
-        const op = (sub.match(/\(/g) || []).length;
-        const cl = (sub.match(/\)/g) || []).length;
-        if ((sub.startsWith('(') && op > cl) || (sub.startsWith(')') && cl > op) || /^\s/.test(sub)) sIdx++;
-        else break;
-      }
-      const tok = str.slice(sIdx, eIdx);
-      if (!tok || /^[()\[\]\s]+$/.test(tok)) continue;
-      if (sIdx > last) el.appendChild(document.createTextNode(str.slice(last, sIdx)));
-      const bdi = document.createElement('bdi');
-      bdi.dir = 'ltr';
-      bdi.className = 'math-ltr';
-      bdi.textContent = tok;
-      el.appendChild(bdi);
-      last = eIdx;
+    if (window.MathKaTeX?.renderMixed) {
+      window.MathKaTeX.renderMixed(el, text);
+      return;
     }
-    if (last < str.length) el.appendChild(document.createTextNode(str.slice(last)));
+    el.textContent = String(text || '');
   }
   window.setSeqBidiSafeMath = setBidiSafeMath;
 
@@ -127,7 +99,7 @@
     srcTag.textContent = targetInfo.kind === 'gate'
       ? `اختراق البوابة — ${targetInfo.gate.sectorName}`
       : `تفكيك النواة — ${targetInfo.drone.label}`;
-    topTag.textContent = `البند ${q.topic}: ${window.SEQ_TOPICS[q.topic] || ''}`;
+    setBidiSafeMath(topTag, `البند ${q.topic}: ${window.SEQ_TOPICS[q.topic] || ''}`);
     setBidiSafeMath(promptEl, q.prompt);
 
     if (q.graphSpec) {
@@ -379,6 +351,19 @@
       document.getElementById('scoreValue').textContent = scStr;
     }
 
+    const nVal = p.currN || 0;
+    const unVal = (p.currUn || 0).toFixed(1);
+    const errVal = (p.distToL || 0).toFixed(1);
+    const seqLatex = `u_{${nVal}}=${unVal}\\;(|u_n-L|=${errVal})`;
+    if (hudCache.seqLatex !== seqLatex) {
+      hudCache.seqLatex = seqLatex;
+      const seqEl = document.getElementById('seqLiveKaTeX');
+      if (seqEl) {
+        if (window.MathKaTeX?.renderLatex) window.MathKaTeX.renderLatex(seqEl, seqLatex, false);
+        else seqEl.textContent = `u_${nVal} = ${unVal}`;
+      }
+    }
+
     const cShow = state.stats.combo >= 2;
     if (hudCache.cShow !== cShow || hudCache.cVal !== state.stats.combo) {
       hudCache.cShow = cShow;
@@ -406,6 +391,7 @@
 
   window.initStriderControls(() => state);
   updateFilterUI();
+  window.MathKaTeX?.scanPage?.(document);
 
   function tick(ts) {
     const rawDt = Math.min(0.05, Math.max(0.001, (ts - lastTs) / 1000));

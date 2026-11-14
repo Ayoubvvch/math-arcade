@@ -392,23 +392,16 @@ window.drawGame = function(ctx, canvas) {
         }
     }
 
-    // 14. The Player Craft
+    // 14. The Player Craft — Articulated Twin-Wing Interceptor Starfighter
     ctx.save();
     ctx.translate(p.x, p.y);
     if (p.invulnTimer > 0 && Math.floor(p.invulnTimer / 3) % 2 === 0) {
         ctx.globalAlpha = 0.45;
     }
 
-    // Invuln shield shimmer or ambient craft halo
-    ctx.strokeStyle = p.invulnTimer > 0 ? 'rgba(255, 0, 127, 0.35)' : 'rgba(0, 243, 255, 0.22)';
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.arc(0, 0, p.radius - 2, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Orbiting PlayStation Symbols Ring
+    // Orbiting PlayStation Drone Pods
     const orbitAngle = gs.time * 0.025;
-    const orbitR = p.radius + 12;
+    const orbitR = p.radius + 16;
     const psGlyphs = [
         { symbol: '✕', color: '#00f3ff', angle: orbitAngle },
         { symbol: '◯', color: '#ff007f', angle: orbitAngle + Math.PI / 2 },
@@ -422,35 +415,72 @@ window.drawGame = function(ctx, canvas) {
     ctx.textBaseline = 'middle';
     for (let i = 0; i < psGlyphs.length; i++) {
         const g = psGlyphs[i];
+        const gx = Math.cos(g.angle) * orbitR;
+        const gy = Math.sin(g.angle) * orbitR;
+        ctx.fillStyle = 'rgba(9, 19, 44, 0.88)';
+        ctx.beginPath();
+        ctx.arc(gx, gy, 7.5, 0, Math.PI * 2);
+        ctx.fill();
         ctx.fillStyle = g.color;
-        ctx.fillText(g.symbol, Math.cos(g.angle) * orbitR, Math.sin(g.angle) * orbitR);
+        ctx.fillText(g.symbol, gx, gy);
     }
 
-    // Aim Pointer
+    // Rotate Starfighter Chassis along aim/flight vector
     ctx.save();
     ctx.rotate(p.aimAngle);
+
+    // Dual Plasma Afterburners
+    const flameLen = 10 + Math.sin(gs.time * 0.8) * 4;
     ctx.fillStyle = '#00ff88';
     ctx.beginPath();
-    ctx.moveTo(p.radius + 10, 0);
-    ctx.lineTo(p.radius - 2, -6);
-    ctx.lineTo(p.radius - 2, 6);
+    ctx.moveTo(-p.radius + 4, -8);
+    ctx.lineTo(-p.radius - flameLen, -5);
+    ctx.lineTo(-p.radius + 4, -2);
+    ctx.moveTo(-p.radius + 4, 2);
+    ctx.lineTo(-p.radius - flameLen, 5);
+    ctx.lineTo(-p.radius + 4, 8);
     ctx.closePath();
     ctx.fill();
+
+    // Swept Delta Interceptor Wings
+    ctx.fillStyle = '#0a1636';
+    ctx.strokeStyle = p.invulnTimer > 0 ? '#ff007f' : '#00f3ff';
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(p.radius + 11, 0);          // Nose spear
+    ctx.lineTo(-4, -p.radius - 7);        // Port wingtip
+    ctx.lineTo(-p.radius + 3, -p.radius + 2);
+    ctx.lineTo(-p.radius + 6, 0);         // Tail notch
+    ctx.lineTo(-p.radius + 3, p.radius - 2);
+    ctx.lineTo(-4, p.radius + 7);         // Starboard wingtip
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Forward Laser Cannons on Wingtips
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-2, -p.radius - 4);
+    ctx.lineTo(10, -p.radius - 4);
+    ctx.moveTo(-2, p.radius + 4);
+    ctx.lineTo(10, p.radius + 4);
+    ctx.stroke();
     ctx.restore();
 
-    // Inner Core
-    ctx.fillStyle = '#09132c';
-    ctx.strokeStyle = p.invulnTimer > 0 ? '#ff007f' : '#00f3ff';
-    ctx.lineWidth = 2.5;
+    // Central Cockpit Hub (upright for readable X=coreX)
+    ctx.fillStyle = '#061024';
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(0, 0, p.radius - 4, 0, Math.PI * 2);
+    ctx.arc(0, 0, p.radius - 7, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
     // Player X Value Display
     ctx.direction = 'ltr';
     ctx.fillStyle = '#ffffff';
-    ctx.font = '800 13px "JetBrains Mono", monospace';
+    ctx.font = '800 12px "JetBrains Mono", monospace';
     ctx.fillText(`X=${p.coreX}`, 0, 0);
     ctx.restore();
 
