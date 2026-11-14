@@ -122,5 +122,37 @@
     "accentColor": "#22d3ee",
     "status": "ready",
     "featured": true
+  },
+  {
+    "id": "complex-plane-duel",
+    "title": "Complex Plane: Argand Orbit Duel",
+    "slug": "complex-plane-duel",
+    "category": "Complex Analysis & Geometry",
+    "difficulty": "Master (2BAC)",
+    "difficultyLevel": 5,
+    "version": "1.0.0",
+    "description": "High-octane PlayStation orbital combat in the Argand plane. Harness Euler rotation phase shifts ($z \\mapsto z\\cdot e^{i\\theta}$), project $n$-th roots of unity barrier polygons ($z^n = 1$), and trigger homothety shockwaves against Cauchy poles.",
+    "mathConcepts": [
+      "Complex Affix & Modulus ($z = x + iy, |z| = \\sqrt{x^2+y^2}$)",
+      "Euler Polar Rotation ($z \\mapsto z\\cdot e^{i\\theta}, \\arg(z)$ Phase Shift)",
+      "Roots of Unity Polygon Shields ($z^n = 1$ for $n=3, 4, 6, 8$)",
+      "Complex Conjugation ($z \\mapsto \\bar{z}$ Reflection)",
+      "Homothety Dilation ($z \\mapsto k\\cdot z$ Metric Shockwave)"
+    ],
+    "controls": [
+      "✕ (Cross): Euler Rotation Dash ($z\\cdot e^{i\\pi/3}$ Phase Warp)",
+      "▢ (Square): Orthogonal Affix Beams ($\\text{Re} / \\text{Im}$ Pulses)",
+      "◯ (Circle): Roots of Unity Barrier Shield ($z^n = 1$)",
+      "△ (Triangle): Homothety Metric Shockwave ($z \\mapsto k\\cdot z$)",
+      "L1 / R1: Cycle Roots Symmetry Order ($n=3, 4, 6, 8$)",
+      "L2: Complex Conjugate Flip ($z \\mapsto \\bar{z}$ Reflection)",
+      "Left & Right Sticks: 360° Argand Flight & Phase Targeting"
+    ],
+    "path": "games/complex-plane-duel/index.html",
+    "badge": "Complex",
+    "icon": "ℂ",
+    "accentColor": "#ffd700",
+    "status": "ready",
+    "featured": true
   }
 ]

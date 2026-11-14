@@ -1,6 +1,6 @@
 {
   "project": "Math Arcade",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "repository": "https://github.com/Ayoubvvch/math-arcade",
   "deployment": "https://ayoubvvch.github.io/math-arcade/",
   "owner": "Ayoub (eulerx0)",
@@ -11,10 +11,10 @@
     "eveningPhase": "17:00 UTC - Phase Omega (Hardening, 60fps Tuning & Audio Polish)"
   },
   "metrics": {
-    "totalCyclesCompleted": 3,
-    "lastCycleTimestamp": "2026-11-14T00:17:00Z",
-    "lastCyclePhase": "PS5 Console Hub & DualSense Masterclass Polish",
-    "totalGamesLive": 4,
+    "totalCyclesCompleted": 4,
+    "lastCycleTimestamp": "2026-11-14T05:00:00Z",
+    "lastCyclePhase": "Phase Alpha: Complex Plane Duel Launch & 5-Game Milestone",
+    "totalGamesLive": 5,
     "verificationStatus": "PASSED_100_PERCENT"
   },
   "liveGames": [
@@ -23,7 +23,7 @@
       "slug": "mathcore-survivor",
       "title": "MathCore: PlayStation Survivor",
       "category": "Algebra & Parity",
-      "version": "1.3.0",
+      "version": "2.0.0",
       "status": "STABLE_PS5_OPTIMIZED"
     },
     {
@@ -31,7 +31,7 @@
       "slug": "math-battle",
       "title": "Math Battle: Calculus Showdown",
       "category": "Differential Calculus",
-      "version": "2.1.0",
+      "version": "2.0.0",
       "status": "STABLE_PS5_OPTIMIZED"
     },
     {
@@ -49,6 +49,14 @@
       "category": "Suites",
       "version": "1.0.0",
       "status": "STABLE_PS5_OPTIMIZED"
+    },
+    {
+      "id": "complex-plane-duel",
+      "slug": "complex-plane-duel",
+      "title": "Complex Plane: Argand Orbit Duel",
+      "category": "Complex Analysis & Geometry",
+      "version": "1.0.0",
+      "status": "LIVE_NEW"
     }
   ],
   "currentSprint": {
@@ -59,7 +67,7 @@
     "endDate": "2026-11-20",
     "activeTargetGame": "complex-plane-duel",
     "gameplayConcept": "High-Speed Argand Orbital Action Combat (Euler Rotation Shields & Affix Beams)",
-    "nextPlannedExperiment": "Non-Euclidean Hyperbolic Horror / Mathematical Mario Gravity Platformer",
+    "nextPlannedExperiment": "integral-area-slicer (Riemann Sums Area Slicer)",
     "qualityFocus": "100% PlayStation DualSense Support, 60-120 FPS GPU Composited Layers, Web Audio Haptics"
   }
 }

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Complex Plane Duel: Argand Orbit Survivor [PlayStation Edition] - Math Arcade</title>
+  <meta name="description" content="High-speed orbital action combat in the complex Argand plane. Command Euler rotation dashes, roots of unity barrier shields, and homothety shockwaves.">
+  <link rel="stylesheet" href="../../css/common.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Header & Hub Link -->
+    <header class="top-nav">
+      <a href="../../" class="hub-back-btn">‹ PS5 ARCADE HUB</a>
+      <span style="font-weight: 900; letter-spacing: 0.5px; color: #f8fafc;">COMPLEX PLANE: ARGAND DUEL</span>
+      <button id="btnAudio" class="btn" style="padding: 2px 7px; font-size: 9px;">🔊 AUDIO: ON</button>
+    </header>
+
+    <!-- Pilot & Controller Status Bar -->
+    <div class="pilot-bar">
+      <button id="btnRootsOrder" class="roots-order-pill" title="Cycle Roots Order (L1/R1 or Bracket Keys)">
+        ROOTS: n=3 △
+      </button>
+
+      <div class="controller-badge">
+        <span id="padDot" class="pad-dot"></span>
+        <span id="padStatus">DUALSENSE: CONNECT VIA USB / BT</span>
+      </div>
+    </div>
+
+    <!-- Canvas Viewport -->
+    <main class="viewport" id="viewport">
+      <canvas id="gameCanvas" width="540" height="960"></canvas>
+
+      <!-- Mobile Touch Joystick Area & PlayStation Button Cluster -->
+      <div class="touch-stick-area" id="touchStickArea"></div>
+      <div class="touch-controls">
+        <div></div>
+        <div class="touch-cluster">
+          <button id="touchRotateBtn" class="touch-btn touch-btn-cross" title="Euler Rotation (✕)">
+            <span style="font-size: 15px; font-weight: 900;">✕</span>
+            <span>ROTATE</span>
+          </button>
+          <button id="touchBeamBtn" class="touch-btn touch-btn-square" title="Affix Laser (▢)">
+            <span style="font-size: 14px; font-weight: 900;">▢</span>
+            <span>BEAM</span>
+          </button>
+          <button id="touchShieldBtn" class="touch-btn touch-btn-circle" title="Roots Barrier (◯)">
+            <span style="font-size: 15px; font-weight: 900;">◯</span>
+            <span>SHIELD</span>
+          </button>
+          <button id="touchHomothetyBtn" class="touch-btn touch-btn-triangle" title="Homothety Blast (△)">
+            <span style="font-size: 15px; font-weight: 900;">△</span>
+            <span>EXPAND</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- PlayStation Controller Guide Bar -->
+    <div class="guide-box">
+      <strong>PLAYSTATION DUALSENSE:</strong>
+      [✕] Euler Rotate &nbsp;|&nbsp;
+      [▢] Affix Beam &nbsp;|&nbsp;
+      [◯] Roots Barrier &nbsp;|&nbsp;
+      [△] Homothety Shock &nbsp;|&nbsp;
+      [L1/R1] Cycle n &nbsp;|&nbsp;
+      [L2] Conjugate z̄
+    </div>
+
+    <!-- Control Deck -->
+    <footer class="deck">
+      <div class="action-row">
+        <button id="btnStart" class="btn btn-primary">⏸ PAUSE BATTLE</button>
+        <button id="btnRestart" class="btn">🔄 RESTART ORBIT</button>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="js/game.js"></script>
+</body>
+</html>

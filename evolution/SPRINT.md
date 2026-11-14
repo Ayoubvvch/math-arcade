@@ -9,9 +9,9 @@
 
 | Day | Phase Alpha (05:00 UTC - Creation) | Phase Omega (17:00 UTC - Hardening) | Status |
 | :--- | :--- | :--- | :--- |
-| **Sat (Nov 14)** | Scaffold `complex-plane-duel` (Argand coordinates, complex affix engine $z = x + iy$, modulus & argument) | Audit & tune `math-battle` and `mathcore-survivor` mobile touch response & audio synthesis | ⏳ QUEUED |
-| **Sun (Nov 15)** | Implement Euler geometric transformations ($z' = e^{i\theta} z$, homotheties, roots of unity shields) | Build Complex Plane HUD (real-time affix inspector, angle gauge, polar representation) | ⏳ QUEUED |
-| **Mon (Nov 16)** | Integrate PlayStation DualSense mappings & Web Audio synth for Game 3, register in `games.json` | Cross-game gamepad navigation audit (Hub to games transition, back navigation) | ⏳ QUEUED |
+| **Sat (Nov 14)** | Scaffold & launch `complex-plane-duel` (Argand coordinates, complex affix engine $z = x + iy$, modulus & argument, Euler rotations $z' = e^{i\theta} z$, roots of unity shields) | Audit & tune `complex-plane-duel` along with `math-battle` and `mathcore-survivor` mobile touch response & audio synthesis | ✅ ALPHA DONE / ⏳ OMEGA QUEUED |
+| **Sun (Nov 15)** | Expand boss singularities in Game 3 (Moebius matrix transformations & Riemann surfaces) | Build enhanced polar phase HUD & pedagogical cheatsheet for complex numbers | ⏳ QUEUED |
+| **Mon (Nov 16)** | Integrate PlayStation DualSense advanced haptic profiles for Game 3 | Cross-game gamepad navigation audit (PS5 Hub rail to all 3 games transition) | ⏳ QUEUED |
 | **Tue (Nov 17)** | Scaffold `integral-area-slicer` (Riemann sum engine, Darboux upper/lower sums, area calculation) | Performance benchmarking (120 FPS target, canvas DPI scaling, memory leak check) | ⏳ QUEUED |
 | **Wed (Nov 18)** | Build slicing laser mechanics ($\Delta x \to 0$ resonance beam) & boss curves for Game 4 | Implement Moroccan Baccalaureate integration formulas HUD & pedagogical guides | ⏳ QUEUED |
 | **Thu (Nov 19)** | Register `integral-area-slicer` into Hub, finalize README and technical documentation | Automated code audit, dead-code elimination, verify test suite passes 100% | ⏳ QUEUED |
