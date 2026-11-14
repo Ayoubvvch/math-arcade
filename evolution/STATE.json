@@ -14,32 +14,16 @@
     "totalCyclesCompleted": 4,
     "lastCycleTimestamp": "2026-11-14T05:00:00Z",
     "lastCyclePhase": "Phase Alpha: Complex Plane Duel Launch & 5-Game Milestone",
-    "totalGamesLive": 5,
+    "totalGamesLive": 2,
     "verificationStatus": "PASSED_100_PERCENT"
   },
   "liveGames": [
     {
-      "id": "mathcore-survivor",
-      "slug": "mathcore-survivor",
-      "title": "MathCore: PlayStation Survivor",
-      "category": "Algebra & Parity",
-      "version": "2.0.0",
-      "status": "STABLE_PS5_OPTIMIZED"
-    },
-    {
       "id": "math-battle",
       "slug": "math-battle",
       "title": "Math Battle: Calculus Showdown",
-      "category": "Differential Calculus",
-      "version": "2.0.0",
-      "status": "STABLE_PS5_OPTIMIZED"
-    },
-    {
-      "id": "asymptote-asylum",
-      "slug": "asymptote-asylum",
-      "title": "Asymptote Asylum — مصحّة المشتقة",
-      "category": "Horror Calculus",
-      "version": "1.0.0",
+      "category": "Calculus & Analysis",
+      "version": "2.1.0",
       "status": "STABLE_PS5_OPTIMIZED"
     },
     {
@@ -47,16 +31,8 @@
       "slug": "sequence-strider",
       "title": "Sequence Strider — عدّاء المتتاليات",
       "category": "Suites",
-      "version": "1.0.0",
+      "version": "2.0.0",
       "status": "STABLE_PS5_OPTIMIZED"
-    },
-    {
-      "id": "complex-plane-duel",
-      "slug": "complex-plane-duel",
-      "title": "Complex Plane: Argand Orbit Duel",
-      "category": "Complex Analysis & Geometry",
-      "version": "1.0.0",
-      "status": "LIVE_NEW"
     }
   ],
   "currentSprint": {
@@ -65,8 +41,8 @@
     "creativeCharter": "Total Creative Sovereignty (Fun & Thrill First: Roguelites, Horror, Platformers, Shooters with True Math Core)",
     "startDate": "2026-11-14",
     "endDate": "2026-11-20",
-    "activeTargetGame": "complex-plane-duel",
-    "gameplayConcept": "High-Speed Argand Orbital Action Combat (Euler Rotation Shields & Affix Beams)",
+    "activeTargetGame": "sequence-strider",
+    "gameplayConcept": "High-Octane Calculus Showdown & 2BAC Suites Cyber Platformer",
     "nextPlannedExperiment": "integral-area-slicer (Riemann Sums Area Slicer)",
     "qualityFocus": "100% PlayStation DualSense Support, 60-120 FPS GPU Composited Layers, Web Audio Haptics"
   }

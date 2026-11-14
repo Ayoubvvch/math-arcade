@@ -10,28 +10,6 @@ import { gamepad } from '../shared/gamepad.js';
 function getGameArtworkSVG(game) {
   const accent = game.accentColor || '#00e5ff';
 
-  if (game.id === 'mathcore-survivor') {
-    return `
-      <svg class="tile-svg" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-          <radialGradient id="mcGlow" cx="50%" cy="50%" r="55%">
-            <stop offset="0%" stop-color="#00f3ff" stop-opacity="0.32" />
-            <stop offset="100%" stop-color="#060914" stop-opacity="0" />
-          </radialGradient>
-        </defs>
-        <rect width="320" height="200" fill="#070c1a" />
-        <circle cx="160" cy="100" r="85" fill="url(#mcGlow)" />
-        <circle cx="160" cy="100" r="56" fill="none" stroke="#00f3ff" stroke-opacity="0.28" stroke-dasharray="6 6" stroke-width="1.5" />
-        <circle cx="160" cy="100" r="28" fill="#09152e" stroke="#00f3ff" stroke-width="2.5" />
-        <text x="160" y="106" text-anchor="middle" fill="#ffffff" font-family="JetBrains Mono, monospace" font-weight="800" font-size="16">X=n</text>
-        <path d="M72 58 L134 88 M248 142 L186 112" stroke="#00ff88" stroke-width="2" stroke-linecap="round" stroke-opacity="0.85" />
-        <polygon points="72,44 86,68 58,68" fill="none" stroke="#ff007f" stroke-width="2.2" />
-        <rect x="234" y="128" width="26" height="26" rx="4" fill="none" stroke="#ffb800" stroke-width="2.2" />
-        <text x="247" y="54" text-anchor="middle" fill="#00e5ff" font-family="JetBrains Mono, monospace" font-weight="800" font-size="14">✕ ◯ ▢ △</text>
-      </svg>
-    `;
-  }
-
   if (game.id === 'math-battle') {
     return `
       <svg class="tile-svg" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -51,31 +29,6 @@ function getGameArtworkSVG(game) {
         <circle cx="222" cy="76" r="24" fill="#1b071e" stroke="#ff5500" stroke-width="2.5" />
         <text x="222" y="83" text-anchor="middle" fill="#ff5500" font-family="Cambria Math, Georgia, serif" font-style="italic" font-weight="700" font-size="20">x³</text>
         <text x="255" y="152" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono, monospace" font-weight="800" font-size="13">→ 0</text>
-      </svg>
-    `;
-  }
-
-  if (game.id === 'asymptote-asylum') {
-    return `
-      <svg class="tile-svg" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-          <radialGradient id="aaGlow" cx="50%" cy="52%" r="55%">
-            <stop offset="0%" stop-color="#ef4444" stop-opacity="0.38" />
-            <stop offset="100%" stop-color="#050205" stop-opacity="0" />
-          </radialGradient>
-        </defs>
-        <rect width="320" height="200" fill="#070204" />
-        <circle cx="160" cy="104" r="92" fill="url(#aaGlow)" />
-        <circle cx="160" cy="100" r="54" fill="none" stroke="#dc2626" stroke-width="2" stroke-opacity="0.55" />
-        <circle cx="160" cy="100" r="38" fill="none" stroke="#991b1b" stroke-dasharray="6 5" stroke-width="1.5" />
-        <path d="M46 156 Q 112 130 160 88 T 274 36" fill="none" stroke="#38bdf8" stroke-width="2.4" />
-        <line x1="78" y1="146" x2="246" y2="30" stroke="#fbbf24" stroke-dasharray="5 4" stroke-width="1.8" />
-        <circle cx="160" cy="88" r="5" fill="#fbbf24" />
-        <ellipse cx="92" cy="148" rx="18" ry="8" fill="#7f1d1d" fill-opacity="0.8" />
-        <ellipse cx="242" cy="146" rx="22" ry="10" fill="#991b1b" fill-opacity="0.72" />
-        <circle cx="240" cy="70" r="3.2" fill="#ff2a2a" />
-        <circle cx="252" cy="70" r="3.2" fill="#ff2a2a" />
-        <text x="160" y="166" text-anchor="middle" fill="#fecaca" font-family="JetBrains Mono, monospace" font-weight="800" font-size="13">f'(x₀) — 23..38</text>
       </svg>
     `;
   }

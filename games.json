@@ -1,35 +1,5 @@
 [
   {
-    "id": "mathcore-survivor",
-    "title": "MathCore: PlayStation Survivor",
-    "slug": "mathcore-survivor",
-    "category": "Algebra & Limits",
-    "difficulty": "Intermediate",
-    "difficultyLevel": 3,
-    "version": "2.1.0",
-    "description": "Tactical 2D Continuity & Limits Interceptor engineered for PlayStation DualSense. Pilot an articulated Starfighter inside a live domain field, resolve $\\lim_{x\\to x_0} f(x)$, and deploy Intermediate Value Theorem (TVI) turrets.",
-    "mathConcepts": [
-      "Limits & Indeterminate Forms $\\frac{0}{0}, \\frac{\\infty}{\\infty}$ (1–13)",
-      "Continuity at $x_0$ & on Intervals (14–18)",
-      "Intermediate Value Theorem $f(\\alpha)=0$ (19–20)",
-      "Bijection & Inverse $f^{-1}$ on $J=f(I)$ (21–22)"
-    ],
-    "controls": [
-      "Left Stick / WASD: Pilot Interceptor Starfighter",
-      "✕, ◯, ▢, △: 4 PlayStation Limit & Continuity Operations",
-      "R2 / Space: Continuity EMP Wave",
-      "L2 / F / Right Click: Deploy TVI Bisection Turret",
-      "L1 / R1: Switch Curriculum Filter (All / Limits / Continuity)",
-      "Options / Esc: Pause Menu & Topic Filter"
-    ],
-    "path": "games/mathcore-survivor/index.html",
-    "badge": "Limits",
-    "icon": "∑",
-    "accentColor": "#00f3ff",
-    "status": "ready",
-    "featured": true
-  },
-  {
     "id": "math-battle",
     "title": "Math Battle: Calculus Showdown",
     "slug": "math-battle",
@@ -61,38 +31,6 @@
     "featured": true
   },
   {
-    "id": "asymptote-asylum",
-    "title": "Asymptote Asylum — مصحّة المشتقة",
-    "slug": "asymptote-asylum",
-    "category": "Horror Calculus",
-    "difficulty": "Master (2BAC)",
-    "difficultyLevel": 5,
-    "version": "2.0.0",
-    "description": "لعبة رعب هندسي وبقاء دموي 2D بسرعة 60FPS! عش داخل المعلم المتعامد الممنظم $(O, \\vec{i}, \\vec{j})$، شقّ طريقك بمنشار الاشتقاق الدوار، شيّد جسور المماس $(T): y=f'(x_0)(x-x_0)+f(x_0)$ فوق شقوق المقاربات العمودية، وحطّم الأختام الأربعة عبر محاور الاشتقاق ودراسة الدوال (23–38) بعرض KaTeX احترافي.",
-    "mathConcepts": [
-      "الاشتقاق، المماس $(T)$، النقطة المزواة ومشتقة $f^{-1}$ (23–29)",
-      "الرتابة $f'(x)$، الدالة المساعدة $g(x)$ ونقطة الانعطاف $f''(x)$ (30–34)",
-      "الفروع اللانهائية كاملة والوضع النسبي مع $(\\Delta)$ (35–36)",
-      "عناصر التماثل والإنشاء الهندسي لـ $(C_f)$ و $(C_{f^{-1}})$ (37–38)"
-    ],
-    "controls": [
-      "Left Stick / WASD: المشي في المعلم المتعامد الممنظم $(O, \\vec{i}, \\vec{j})$",
-      "Right Stick / Mouse: توجيه منشار المشتقة وإطلاق نصل القاطع",
-      "✕ (Cross / J): بتر بمنشار الاشتقاق / إعدام الوحش المشلول",
-      "▢ (Square / L): فتح طقس الاشتقاق لتحطيم ختم المنحنى",
-      "◯ (Circle / Shift): اندفاع مماسي سريع على طول $\\vec{T}(1, f'(x_0))$",
-      "△ (Triangle / Q): نبضة الانعطاف $f''(x)=0$ لكشف الظلام وتبطيء الوحوش",
-      "R2 / Space / كليك: إطلاق قاطع ميل سريع",
-      "L2 / F: صياغة جسر المماس $(T): y = f'(x_0)(x-x_0)+f(x_0)$"
-    ],
-    "path": "games/asymptote-asylum/index.html",
-    "badge": "Horror",
-    "icon": "∂",
-    "accentColor": "#ef4444",
-    "status": "ready",
-    "featured": true
-  },
-  {
     "id": "sequence-strider",
     "title": "Sequence Strider — عدّاء المتتاليات",
     "slug": "sequence-strider",
@@ -120,38 +58,6 @@
     "badge": "Suites",
     "icon": "uₙ",
     "accentColor": "#22d3ee",
-    "status": "ready",
-    "featured": true
-  },
-  {
-    "id": "complex-plane-duel",
-    "title": "Complex Plane: Argand Orbit Duel",
-    "slug": "complex-plane-duel",
-    "category": "Complex Analysis & Geometry",
-    "difficulty": "Master (2BAC)",
-    "difficultyLevel": 5,
-    "version": "1.0.0",
-    "description": "High-octane PlayStation orbital combat in the Argand plane. Harness Euler rotation phase shifts ($z \\mapsto z\\cdot e^{i\\theta}$), project $n$-th roots of unity barrier polygons ($z^n = 1$), and trigger homothety shockwaves against Cauchy poles.",
-    "mathConcepts": [
-      "Complex Affix & Modulus ($z = x + iy, |z| = \\sqrt{x^2+y^2}$)",
-      "Euler Polar Rotation ($z \\mapsto z\\cdot e^{i\\theta}, \\arg(z)$ Phase Shift)",
-      "Roots of Unity Polygon Shields ($z^n = 1$ for $n=3, 4, 6, 8$)",
-      "Complex Conjugation ($z \\mapsto \\bar{z}$ Reflection)",
-      "Homothety Dilation ($z \\mapsto k\\cdot z$ Metric Shockwave)"
-    ],
-    "controls": [
-      "✕ (Cross): Euler Rotation Dash ($z\\cdot e^{i\\pi/3}$ Phase Warp)",
-      "▢ (Square): Orthogonal Affix Beams ($\\text{Re} / \\text{Im}$ Pulses)",
-      "◯ (Circle): Roots of Unity Barrier Shield ($z^n = 1$)",
-      "△ (Triangle): Homothety Metric Shockwave ($z \\mapsto k\\cdot z$)",
-      "L1 / R1: Cycle Roots Symmetry Order ($n=3, 4, 6, 8$)",
-      "L2: Complex Conjugate Flip ($z \\mapsto \\bar{z}$ Reflection)",
-      "Left & Right Sticks: 360° Argand Flight & Phase Targeting"
-    ],
-    "path": "games/complex-plane-duel/index.html",
-    "badge": "Complex",
-    "icon": "ℂ",
-    "accentColor": "#ffd700",
     "status": "ready",
     "featured": true
   }
