@@ -60,5 +60,35 @@
     "accentColor": "#22d3ee",
     "status": "ready",
     "featured": true
+  },
+  {
+    "id": "ln-e-integral-quest",
+    "title": "مغامرة ln و e والتكامل ∫",
+    "slug": "ln-e-integral-quest",
+    "category": "Calculus & Analysis",
+    "difficulty": "Beginner → 2BAC",
+    "difficultyLevel": 2,
+    "version": "1.0.0",
+    "description": "مغامرة منصات بسيطة بأسلوب Super Mario (جري، تسلق، طيران، ألغاز) تشرح الدالة اللوغاريتمية $\\ln(x)$ والدالة الأسية $e^x$ والتكامل $\\int_a^b f(x)\\,dx$ من البداية لتلاميذ الثانية باك علوم فيزيائية.",
+    "mathConcepts": [
+      "الدالة $\\ln(x)$ من الصفر: $D_{\\ln}=]0,+\\infty[$، $\\ln(1)=0$، $\\ln(e)=1$",
+      "الدالة الأسية: $e^x > 0$، $e^0=1$، و $(e^x)'=e^x$",
+      "التكامل والمساحة: $\\int_a^b f(x)dx = F(b)-F(a)$ وعلاقة شال",
+      "تطبيقات 2BAC PC: المعادلات، المكاملة بالأجزاء (ALPES)، المساحات"
+    ],
+    "controls": [
+      "Left Stick / A-D / ◀▶: الجري فوق المنحنيات والمنصات",
+      "W-S / ▲▼: تسلق السلالم نحو مكعبات الدروس ?",
+      "✕ (Cross / Space): قفز وطيران بأجنحة $e^x$",
+      "▢ (Square / E): فتح ألغاز القلعة وإعادة قراءة الدروس",
+      "△ (Triangle / H): دفتر الدروس من الصفر",
+      "Options / P / M: إيقاف مؤقت وكتم الصوت"
+    ],
+    "path": "games/ln-e-integral-quest/index.html",
+    "badge": "2BAC PC",
+    "icon": "ln",
+    "accentColor": "#10b981",
+    "status": "ready",
+    "featured": true
   }
 ]

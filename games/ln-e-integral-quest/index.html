@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>مغامرة ln و e والتكامل — 2BAC علوم فيزيائية | Math Arcade</title>
+  <meta name="description" content="لعبة منصات تعليمية بسيطة بأسلوب Super Mario (جري، تسلق، طيران، ألغاز) لتعلم الدالة اللوغاريتمية ln والدالة الأسية eˣ والتكامل من الصفر لتلاميذ الثانية باك علوم فيزيائية." />
+  <link rel="stylesheet" href="../../shared/vendor/katex/katex.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <canvas id="gameCanvas" aria-label="ساحة مغامرة الرياضيات"></canvas>
+
+  <!-- TOP HUD -->
+  <header class="hud-bar" id="hudBar">
+    <div class="hud-group hud-stats glass-panel">
+      <div class="world-pill" id="hudWorldLabel">المستوى 1: وادي ln</div>
+
+      <div class="stat-chip hearts-chip" title="قلوب الحياة">
+        <span id="hudHearts" class="hearts-icons">❤️❤️❤️</span>
+      </div>
+
+      <div class="stat-chip" title="العملات الرياضية">
+        <span class="chip-ico">🪙</span>
+        <span id="hudCoins" class="math-ltr">0 / 12</span>
+      </div>
+
+      <div class="stat-chip" title="الألغاز المحلولة">
+        <span class="chip-ico">🧩</span>
+        <span id="hudPuzzles" class="math-ltr">0 / 2</span>
+      </div>
+
+      <div class="stat-chip" title="بطاقات الدروس المكتشفة">
+        <span class="chip-ico">❓</span>
+        <span id="hudLessons" class="math-ltr">0 / 3</span>
+      </div>
+
+      <div class="wing-meter hidden" id="hudWingWrap" title="طاقة أجنحة الطيران eˣ">
+        <span class="wing-ico">🪽</span>
+        <div class="wing-track">
+          <div class="wing-fill" id="hudWingFill" style="width: 100%"></div>
+        </div>
+      </div>
+
+      <div class="stat-chip coord-chip" id="hudCoordChip" title="إحداثياتك الحية على المنحنى">
+        <span id="hudCoordMath" class="math-ltr">x=1, ln(1)=0</span>
+      </div>
+    </div>
+
+    <div class="hud-group hud-actions">
+      <a href="../../index.html?from=game" class="arcade-btn tool-btn hub-btn" id="btnHubTop" title="العودة إلى قائمة الألعاب">
+        <span>◀ Hub</span>
+      </a>
+
+      <button type="button" class="arcade-btn tool-btn notebook-btn" id="btnOpenNotebook" title="دفتر الدروس من الصفر [H / △]">
+        <span>📖 الدروس من الصفر</span>
+      </button>
+
+      <button type="button" class="arcade-btn tool-btn" id="btnLevelMenu" title="اختيار المستوى">
+        <span>🗺️ المراحل</span>
+      </button>
+
+      <div class="gp-status disconnected" id="gpStatusPill" title="حالة يد التحكم">
+        <span>🎮</span>
+        <span id="gpStatusLabel">كيبورد</span>
+      </div>
+
+      <button type="button" class="arcade-btn icon-btn" id="btnToggleAudio" aria-label="تبديل الصوت" title="الصوت [M]">🔊</button>
+      <button type="button" class="arcade-btn icon-btn" id="btnTogglePause" aria-label="إيقاف مؤقت" title="إيقاف مؤقت [Esc / P]">⏸</button>
+    </div>
+  </header>
+
+  <!-- NON-BLOCKING EDUCATIONAL TOAST BANNER -->
+  <div class="world-toast" id="worldToast" aria-live="polite"></div>
+
+  <!-- CONTEXT PROMPT (when near ladder / gate / puzzle) -->
+  <div class="context-pill hidden" id="contextPill"></div>
+
+  <!-- DESKTOP COMPACT LEGEND -->
+  <div class="desktop-legend glass-panel" id="desktopLegend">
+    <span><kbd>◀ ▶</kbd> / <kbd>A D</kbd> حركة</span>
+    <span><kbd>▲ ▼</kbd> / <kbd>W S</kbd> تسلق سلم</span>
+    <span><kbd>Space</kbd> / <kbd>✕</kbd> قفز وطيران</span>
+    <span><kbd>E</kbd> / <kbd>▢</kbd> فتح بوابة / قراءة</span>
+    <span><kbd>H</kbd> / <kbd>△</kbd> دفتر الدروس</span>
+  </div>
+
+  <!-- TOUCH / ON-SCREEN MARIO CONTROLS (Mobile & Tablet + Clickable Quick Controls) -->
+  <div class="touch-controls" id="touchControls">
+    <div class="touch-dpad">
+      <button type="button" class="pad-btn pad-up" id="btnTouchUp" aria-label="أعلى / تسلق">▲</button>
+      <div class="pad-mid-row">
+        <button type="button" class="pad-btn pad-right" id="btnTouchRight" aria-label="يمين">▶</button>
+        <button type="button" class="pad-btn pad-left" id="btnTouchLeft" aria-label="يسار">◀</button>
+      </div>
+      <button type="button" class="pad-btn pad-down" id="btnTouchDown" aria-label="أسفل / تسلق">▼</button>
+    </div>
+
+    <div class="touch-actions">
+      <button type="button" class="act-btn act-interact" id="btnTouchInteract" title="تفاعل / فتح البوابة [E / ▢]">
+        <span class="ps-dot sq">▢</span>
+        <small>تفاعل</small>
+      </button>
+      <button type="button" class="act-btn act-jump" id="btnTouchJump" title="قفز / طيران [Space / ✕]">
+        <span class="ps-dot cross">✕</span>
+        <small id="touchJumpLabel">قفز</small>
+      </button>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       1. START & WORLD SELECT MODAL
+       ======================================================================= -->
+  <section class="modal-backdrop" id="startModal" role="dialog" aria-modal="true" aria-labelledby="startTitle">
+    <div class="modal-card start-card glass-panel">
+      <div class="start-hero">
+        <div class="hero-badge">🎓 الثانية باكالوريا علوم فيزيائية • من البداية</div>
+        <h1 class="modal-title" id="startTitle">مغامرة <span>ln</span> و <span>eˣ</span> و <span>التكامل ∫</span></h1>
+        <p class="modal-lead">
+          تعلّم هذه المفاهيم لأول مرة بطريقة بسيطة وممتعة مثل <strong>Super Mario</strong>! اجرِ، اقفز على المكعبات <span class="q-inline">?</span> لتكتشف القواعد من الصفر، تسلّق السلالم، طِر بأجنحة <span data-katex="e^x"></span>، وحلّ الألغاز لتصل إلى راية النهاية!
+        </p>
+      </div>
+
+      <div class="world-grid" id="worldGrid">
+        <!-- Populated dynamically by game.js -->
+      </div>
+
+      <div class="quick-how-row">
+        <div class="how-chip">❓ اضرب مكعبات <strong>?</strong> من الأسفل لتفهم الدرس خطوة بخطوة</div>
+        <div class="how-chip">🪜 اصعد السلالم بـ <strong>▲ ▼</strong> واحمل <strong>🪽 أجنحة eˣ</strong> للطيران</div>
+        <div class="how-chip">🧩 اختر المكعب الصحيح لفتح الجسور والأبواب دون خوف من الخطأ</div>
+      </div>
+
+      <div class="start-footer-actions">
+        <button type="button" class="arcade-btn btn-primary" id="btnStartAdventure">
+          <span>✕</span>
+          <span id="btnStartLabel">ابدأ المستوى 1 (من الصفر!)</span>
+        </button>
+
+        <button type="button" class="arcade-btn btn-secondary" id="btnOpenNotebookFromStart">
+          <span>📖 تصفح دفتر الدروس من الصفر</span>
+        </button>
+
+        <a href="../../index.html?from=game" class="arcade-btn btn-ghost">
+          <span>◀ العودة للرئيسية</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       2. MINI LESSON DISCOVERY MODAL (? Block Bump)
+       ======================================================================= -->
+  <section class="modal-backdrop hidden" id="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonTitle">
+    <div class="modal-card lesson-card glass-panel">
+      <div class="lesson-top-row">
+        <span class="lesson-pill" id="lessonPill">✨ اكتشاف جديد من الصفر</span>
+        <span class="lesson-step" id="lessonStepTag">بطاقة 1 / 3</span>
+      </div>
+
+      <h2 class="modal-title small-title" id="lessonTitle">عنوان الدرس</h2>
+
+      <div class="lesson-layout">
+        <div class="lesson-text-col">
+          <div class="lesson-body" id="lessonBody"></div>
+          <div class="lesson-formula-box" id="lessonFormulaBox"></div>
+          <div class="lesson-example-box" id="lessonExampleBox"></div>
+        </div>
+        <div class="lesson-visual-col">
+          <canvas id="lessonCanvas" width="320" height="210"></canvas>
+          <div class="canvas-caption" id="lessonCanvasCaption">رسم توضيحي</div>
+        </div>
+      </div>
+
+      <div class="modal-footer-end">
+        <button type="button" class="arcade-btn btn-primary" id="btnCloseLesson">
+          <span>✕</span>
+          <span>فهمت! متابعة المغامرة [Space / Enter]</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       3. INTERACTIVE CASTLE GATE PUZZLE MODAL
+       ======================================================================= -->
+  <section class="modal-backdrop hidden" id="gatePuzzleModal" role="dialog" aria-modal="true" aria-labelledby="gatePuzzleTitle">
+    <div class="modal-card gate-card glass-panel">
+      <div class="lesson-top-row">
+        <span class="lesson-pill puzzle-pill" id="gateWorldBadge">🏰 لغز بوابة القلعة</span>
+        <span class="lesson-step" id="gateStepBadge">التحدي 1 / 2</span>
+      </div>
+
+      <h2 class="modal-title small-title" id="gatePuzzleTitle">افتح البوابة للوصول إلى الراية!</h2>
+
+      <div class="gate-visual-box">
+        <canvas id="gateCanvas" width="460" height="140"></canvas>
+        <div class="gate-slider-row hidden" id="gateSliderRow">
+          <label for="gateSlider" id="gateSliderLabel">حرّك المستطيلات لترى المساحة:</label>
+          <input type="range" id="gateSlider" min="1" max="12" value="4" />
+          <span class="math-ltr" id="gateSliderVal">n = 4</span>
+        </div>
+      </div>
+
+      <div class="gate-prompt" id="gatePrompt"></div>
+
+      <div class="gate-options" id="gateOptions">
+        <button type="button" class="arcade-btn gate-opt-btn" id="gateOpt0" data-idx="0">
+          <span class="ps-dot cross">✕</span>
+          <span class="opt-label"></span>
+        </button>
+        <button type="button" class="arcade-btn gate-opt-btn" id="gateOpt1" data-idx="1">
+          <span class="ps-dot circle">◯</span>
+          <span class="opt-label"></span>
+        </button>
+        <button type="button" class="arcade-btn gate-opt-btn" id="gateOpt2" data-idx="2">
+          <span class="ps-dot sq">▢</span>
+          <span class="opt-label"></span>
+        </button>
+        <button type="button" class="arcade-btn gate-opt-btn" id="gateOpt3" data-idx="3">
+          <span class="ps-dot tri">△</span>
+          <span class="opt-label"></span>
+        </button>
+      </div>
+
+      <div class="gate-hint hidden" id="gateHintBox"></div>
+      <div class="gate-feedback hidden" id="gateFeedbackBox"></div>
+
+      <div class="gate-footer">
+        <button type="button" class="arcade-btn btn-secondary" id="btnGateHint">
+          <span>💡 تلميح وشرح بسيط [H / R1]</span>
+        </button>
+        <button type="button" class="arcade-btn btn-ghost" id="btnGateClose">
+          <span>العودة للمرحلة [Esc]</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       4. STUDY NOTEBOOK MODAL (دفتر الدروس من الصفر)
+       ======================================================================= -->
+  <section class="modal-backdrop hidden" id="notebookModal" role="dialog" aria-modal="true" aria-labelledby="notebookTitle">
+    <div class="modal-card notebook-card glass-panel">
+      <div class="notebook-header">
+        <h2 class="modal-title small-title" id="notebookTitle">📖 دفتر الدروس من الصفر — <span>2BAC علوم فيزيائية</span></h2>
+        <button type="button" class="arcade-btn icon-btn" id="btnCloseNotebook" aria-label="إغلاق">✕</button>
+      </div>
+
+      <div class="notebook-tabs" id="notebookTabs">
+        <button type="button" class="arcade-btn nb-tab active" data-tab="ln">1. الدالة ln(x)</button>
+        <button type="button" class="arcade-btn nb-tab" data-tab="exp">2. الدالة الأسية eˣ</button>
+        <button type="button" class="arcade-btn nb-tab" data-tab="integral">3. التكامل ∫</button>
+        <button type="button" class="arcade-btn nb-tab" data-tab="cheatsheet">4. ملخص القواعد</button>
+      </div>
+
+      <div class="notebook-content" id="notebookContent">
+        <!-- Rendered with KaTeX by game.js -->
+      </div>
+
+      <div class="modal-footer-end">
+        <button type="button" class="arcade-btn btn-primary" id="btnReturnFromNotebook">
+          <span>✕ العودة للمغامرة</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       5. PAUSE MODAL
+       ======================================================================= -->
+  <section class="modal-backdrop hidden" id="pauseModal" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
+    <div class="modal-card pause-card glass-panel">
+      <h2 class="modal-title small-title" id="pauseTitle">إيقاف مؤقت ⏸</h2>
+      <p class="modal-lead">خذ وقتك! يمكنك مراجعة الدروس أو تبديل المستوى في أي لحظة.</p>
+
+      <div class="pause-stack">
+        <button type="button" class="arcade-btn btn-primary pause-item" id="btnPauseResume">✕ استئناف اللعب [Esc]</button>
+        <button type="button" class="arcade-btn btn-secondary pause-item" id="btnPauseNotebook">📖 فتح دفتر الدروس من الصفر</button>
+        <button type="button" class="arcade-btn btn-secondary pause-item" id="btnPauseLevels">🗺️ اختيار مستوى آخر (1–4)</button>
+        <button type="button" class="arcade-btn btn-secondary pause-item" id="btnPauseRestart">🔄 إعادة هذا المستوى</button>
+        <a href="../../index.html?from=game" class="arcade-btn btn-ghost pause-item">◀ العودة إلى Math Arcade Hub</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       6. LEVEL VICTORY MODAL
+       ======================================================================= -->
+  <section class="modal-backdrop hidden" id="victoryModal" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
+    <div class="modal-card victory-card glass-panel">
+      <div class="victory-stars" id="victoryStars">⭐⭐⭐</div>
+      <h2 class="modal-title" id="victoryTitle">أحسنت! أنهيت المستوى! 🎉</h2>
+      <p class="modal-lead" id="victorySubtitle"></p>
+
+      <div class="victory-stats">
+        <div class="v-stat">
+          <small>العملات</small>
+          <strong id="vCoins" class="math-ltr">12 / 12</strong>
+        </div>
+        <div class="v-stat">
+          <small>الدروس المكتشفة</small>
+          <strong id="vLessons" class="math-ltr">3 / 3</strong>
+        </div>
+        <div class="v-stat">
+          <small>الألغاز المحلولة</small>
+          <strong id="vPuzzles" class="math-ltr">2 / 2</strong>
+        </div>
+      </div>
+
+      <div class="takeaways-box" id="victoryTakeaways"></div>
+
+      <div class="start-footer-actions">
+        <button type="button" class="arcade-btn btn-primary" id="btnNextLevel">
+          <span>✕</span>
+          <span id="btnNextLevelLabel">الانتقال للمستوى التالي ▶</span>
+        </button>
+        <button type="button" class="arcade-btn btn-secondary" id="btnVictoryLevels">🗺️ المراحل</button>
+        <a href="../../index.html?from=game" class="arcade-btn btn-ghost">◀ القائمة الرئيسية</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="../../shared/vendor/katex/katex.min.js"></script>
+  <script src="../../shared/katex-kit.js"></script>
+  <script src="js/lessons.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/controls.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

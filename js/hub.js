@@ -55,6 +55,31 @@ function getGameArtworkSVG(game) {
     `;
   }
 
+  if (game.id === 'ln-e-integral-quest') {
+    return `
+      <svg class="tile-svg" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <radialGradient id="lniGlow" cx="55%" cy="48%" r="58%">
+            <stop offset="0%" stop-color="#10b981" stop-opacity="0.34" />
+            <stop offset="100%" stop-color="#050c17" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <rect width="320" height="200" fill="#06121f" />
+        <circle cx="170" cy="96" r="90" fill="url(#lniGlow)" />
+        <line x1="36" y1="138" x2="284" y2="138" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.2" />
+        <line x1="112" y1="24" x2="112" y2="168" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.2" />
+        <path d="M148 138 L148 92 Q 186 106, 224 114 L224 138 Z" fill="#38bdf8" fill-opacity="0.28" stroke="#38bdf8" stroke-width="1.4" />
+        <path d="M52 132 Q 112 128, 174 34" fill="none" stroke="#fbbf24" stroke-width="2.6" />
+        <path d="M122 164 Q 146 118, 276 82" fill="none" stroke="#34d399" stroke-width="2.6" />
+        <circle cx="148" cy="138" r="4" fill="#34d399" />
+        <circle cx="112" cy="108" r="4" fill="#fbbf24" />
+        <rect x="234" y="34" width="28" height="26" rx="5" fill="#f59e0b" stroke="#fef08a" stroke-width="2" />
+        <text x="248" y="52" text-anchor="middle" fill="#1e1b4b" font-family="JetBrains Mono, monospace" font-weight="900" font-size="16">?</text>
+        <text x="160" y="182" text-anchor="middle" fill="#a7f3d0" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12">ln(x) • eˣ • ∫ₐᵇ f(x)dx</text>
+      </svg>
+    `;
+  }
+
   return `
     <svg class="tile-svg" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect width="320" height="200" fill="#070c18" />
@@ -761,7 +786,7 @@ class ArcadeConsoleHub {
               <span class="tile-badge-pill">${game.badge || game.category}</span>
             </div>
             <div class="tile-meta">
-              <span class="tile-title">${game.title}</span>
+              <span class="tile-title" dir="auto">${game.title}</span>
               <span class="tile-lvl">Lvl ${game.difficultyLevel || 3}</span>
             </div>
           </button>
@@ -836,8 +861,12 @@ class ArcadeConsoleHub {
     if (this.showcaseStatus) {
       this.showcaseStatus.textContent = game.status === 'ready' ? '● READY TO PLAY' : '● IN DEVELOPMENT';
     }
-    if (this.showcaseTitle) this.showcaseTitle.textContent = game.title;
+    if (this.showcaseTitle) {
+      this.showcaseTitle.setAttribute('dir', 'auto');
+      this.showcaseTitle.textContent = game.title;
+    }
     if (this.showcaseDesc) {
+      this.showcaseDesc.setAttribute('dir', 'auto');
       if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(this.showcaseDesc, game.description);
       else this.showcaseDesc.textContent = game.description;
     }
@@ -848,6 +877,7 @@ class ArcadeConsoleHub {
       (game.mathConcepts || []).forEach((c) => {
         const pill = document.createElement('span');
         pill.className = 'concept-pill';
+        pill.setAttribute('dir', 'auto');
         if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(pill, c);
         else pill.textContent = c;
         this.showcaseConcepts.appendChild(pill);
@@ -867,6 +897,7 @@ class ArcadeConsoleHub {
           keySpan.textContent = key;
           const descSpan = document.createElement('span');
           descSpan.className = 'ctrl-desc';
+          descSpan.setAttribute('dir', 'auto');
           if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(descSpan, desc);
           else descSpan.textContent = desc;
           li.appendChild(keySpan);
@@ -918,8 +949,12 @@ class ArcadeConsoleHub {
     const controlsEl = document.getElementById('modal-game-controls');
     const actionEl = document.getElementById('modal-game-action');
 
-    if (titleEl) titleEl.textContent = game.title;
+    if (titleEl) {
+      titleEl.setAttribute('dir', 'auto');
+      titleEl.textContent = game.title;
+    }
     if (descEl) {
+      descEl.setAttribute('dir', 'auto');
       if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(descEl, game.description);
       else descEl.textContent = game.description;
     }
@@ -927,6 +962,7 @@ class ArcadeConsoleHub {
       conceptsEl.innerHTML = '';
       (game.mathConcepts || []).forEach((c) => {
         const li = document.createElement('li');
+        li.setAttribute('dir', 'auto');
         if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(li, c);
         else li.textContent = c;
         conceptsEl.appendChild(li);
@@ -936,6 +972,7 @@ class ArcadeConsoleHub {
       controlsEl.innerHTML = '';
       (game.controls || ['Standard Gamepad / Keyboard']).forEach((c) => {
         const li = document.createElement('li');
+        li.setAttribute('dir', 'auto');
         if (window.MathKaTeX?.renderMixed) window.MathKaTeX.renderMixed(li, c);
         else li.textContent = c;
         controlsEl.appendChild(li);
