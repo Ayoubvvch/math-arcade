@@ -14,7 +14,7 @@
     "totalCyclesCompleted": 4,
     "lastCycleTimestamp": "2026-11-14T05:00:00Z",
     "lastCyclePhase": "Phase Alpha: Complex Plane Duel Launch & 5-Game Milestone",
-    "totalGamesLive": 2,
+    "totalGamesLive": 3,
     "verificationStatus": "PASSED_100_PERCENT"
   },
   "liveGames": [
@@ -32,6 +32,14 @@
       "title": "Sequence Strider — عدّاء المتتاليات",
       "category": "Suites",
       "version": "2.0.0",
+      "status": "STABLE_PS5_OPTIMIZED"
+    },
+    {
+      "id": "ln-e-integral-quest",
+      "slug": "ln-e-integral-quest",
+      "title": "مغامرة ln و e والتكامل ∫",
+      "category": "Calculus & Analysis",
+      "version": "1.0.0",
       "status": "STABLE_PS5_OPTIMIZED"
     }
   ],
