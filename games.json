@@ -90,5 +90,36 @@
     "accentColor": "#10b981",
     "status": "ready",
     "featured": true
+  },
+  {
+    "id": "stickman-cartesian-game",
+    "title": "Stickman Cartesian World — عالم المعلم المتعامد (O; i, j)",
+    "slug": "stickman-cartesian-game",
+    "category": "Calculus & Analysis",
+    "difficulty": "All Levels → Calculus",
+    "difficultyLevel": 3,
+    "version": "1.0.0",
+    "description": "عالم رياضيات حيّ داخل معلم متعامد ممنظم $(O; \\vec{i}, \\vec{j})$ مع شخصية Stickman مفصلية! اركض وتسلق محور الأراتيب $x=0$، ارسم أي دالة $y=f(x)$ وتزلّج على مماساتها $f'(x)$ مع تحليل التقعر $f''(x)$، وأتقن 6 تحديات في الاشتقاق والاتصال $C^1$.",
+    "mathConcepts": [
+      "المعلم المتعامد الممنظم $(O; \\vec{i}, \\vec{j})$ والإسقاطات $(x, y)$ ومتجه السرعة $\\vec{v}$",
+      "رسم الدوال $y=f(x)$ والتزلّج على المماس وحساب المشتقة $f'(x)$ لحظيًا",
+      "النقط الحرجة $f'(x)=0$ ونقط الانعطاف والتقعر $f''(x)=0$",
+      "الخطية المحلية والوصلات الملساء القابلة للاشتقاق $C^1$ والإقلاع المماسي"
+    ],
+    "controls": [
+      "Left Stick / A-D: المشي والجري (+ Shift / RT للسرعة)",
+      "✕ (Cross / Space): قفز وقفز مزدوج · S+Space للنزول من المنحنى",
+      "W / ↑ / Q: تسلق محور الأراتيب x = 0 صعودًا وهبوطًا",
+      "S / ↓ / ○: تسريع التزلّج المماسي (Carve) أو الانحناء والانزلاق",
+      "▢ (Square / E) / △ (Triangle / Z): اندفاع Dash · شقلبة / رقص",
+      "B / Enter (في Trials): تثبيت القمم والقيعان ونقط الانعطاف",
+      "Mouse Drag / Wheel: تحريك المعلم وتكبير الوحدة · R للعودة إلى O(0,0)"
+    ],
+    "path": "games/stickman-cartesian-game/index.html",
+    "badge": "(O; i, j)",
+    "icon": "xy",
+    "accentColor": "#38bdf8",
+    "status": "ready",
+    "featured": true
   }
 ]

@@ -23,16 +23,27 @@ math-arcade/
 │   └── hub.css             # Hub layout, animations, responsive cards, glassmorphic UI
 ├── js/
 │   └── hub.js              # Dynamic loader, fuzzy search, category filter & audio hooks
-├── shared/                 # Universal shared utilities for games
-│   ├── gamepad.js          # PlayStation (✕, ◯, ▢, △) & Xbox gamepad input with dual haptics
-│   ├── math-engine.js      # Vector2D, Calculus operators, Coordinate systems
-│   ├── canvas-kit.js       # HiDPI auto-scaling, Zero-GC particle pool, Cartesian grid
-│   └── retro-audio.js      # Zero-asset Web Audio API pure synthesizer
-├── games/                  # Dedicated directory for self-contained games
-│   ├── math-battle/        # Flagship calculus marble duel simulator
-│   └── README.md           # Game development standard specification
+├── shared/                       # Universal shared utilities & engines for games
+│   ├── cartesian-world.js        # Unified (O; i, j) world barrel + CartesianWorld lifecycle engine
+│   ├── cartesian-config.js       # Orthonormal physics config, themes & math helpers
+│   ├── cartesian-grid.js         # Adaptive (O; i, j) grid, vectors, points & projections
+│   ├── function-plotter.js       # Safe recursive-descent parser, Path2D plotter & f'(x)/f''(x)
+│   ├── cartesian-particles.js    # World-space zero-GC particles (dust, sparks, wind, notes)
+│   ├── cartesian-input.js        # Keyboard, W3C analog Gamepad & virtual touch controller
+│   ├── stickman-engine.js        # Living IK/FK Stickman (curve surfing, y-climb, dash, free fall)
+│   ├── gamepad.js                # PlayStation (✕, ◯, ▢, △) & Xbox gamepad input with dual haptics
+│   ├── math-engine.js            # Vector2D, Calculus operators, Coordinate systems
+│   ├── canvas-kit.js             # HiDPI auto-scaling, Zero-GC particle pool, Cartesian grid
+│   ├── retro-audio.js            # Zero-asset Web Audio API pure synthesizer
+│   └── katex-kit.js              # Mixed Arabic RTL + KaTeX inline formula renderer
+├── games/                        # Dedicated directory for self-contained games
+│   ├── math-battle/              # Calculus marble duel simulator
+│   ├── sequence-strider/         # Numerical sequences 2BAC action platformer
+│   ├── ln-e-integral-quest/      # ln(x), e^x & integral platforming adventure
+│   ├── stickman-cartesian-game/  # Living (O; i, j) Cartesian world, slope surfing & calculus trials
+│   └── README.md                 # Game development standard specification
 └── .github/workflows/
-    └── pages.yml           # Automated GitHub Pages CI/CD deployment
+    └── pages.yml                 # Automated GitHub Pages CI/CD deployment
 ```
 
 ---
@@ -74,8 +85,18 @@ math-arcade/
    }
    ```
 
-3. **Optionally Import Shared Utilities**:
+3. **Optionally Import Shared Utilities or the Full `(O; i, j)` Cartesian World**:
    ```javascript
+   // Spin up a complete (O; i, j) world with the living Stickman & curve plotter:
+   import { CartesianWorld, derivAt } from '../../shared/cartesian-world.js';
+
+   const world = new CartesianWorld({
+     gridCanvas: 'gridCanvas',
+     gameCanvas: 'gameCanvas',
+     expression: 'sin(x) + 1.5',
+   });
+
+   // Or import lightweight standalone arcade helpers:
    import { Vector2D, Calculus } from '../../shared/math-engine.js';
    import { CanvasKit, ParticlePool } from '../../shared/canvas-kit.js';
    import { sound } from '../../shared/retro-audio.js';

@@ -14,7 +14,7 @@
     "totalCyclesCompleted": 4,
     "lastCycleTimestamp": "2026-11-14T05:00:00Z",
     "lastCyclePhase": "Phase Alpha: Complex Plane Duel Launch & 5-Game Milestone",
-    "totalGamesLive": 3,
+    "totalGamesLive": 4,
     "verificationStatus": "PASSED_100_PERCENT"
   },
   "liveGames": [
@@ -38,6 +38,14 @@
       "id": "ln-e-integral-quest",
       "slug": "ln-e-integral-quest",
       "title": "مغامرة ln و e والتكامل ∫",
+      "category": "Calculus & Analysis",
+      "version": "1.0.0",
+      "status": "STABLE_PS5_OPTIMIZED"
+    },
+    {
+      "id": "stickman-cartesian-game",
+      "slug": "stickman-cartesian-game",
+      "title": "Stickman Cartesian World — عالم المعلم المتعامد (O; i, j)",
       "category": "Calculus & Analysis",
       "version": "1.0.0",
       "status": "STABLE_PS5_OPTIMIZED"

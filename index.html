@@ -188,13 +188,14 @@
       <div class="modal-body">
         <div class="search-input-wrap">
           <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          <input type="text" id="search-input" class="search-input" placeholder="Search by title or concept (d/dx, ln, التكامل, Suites, المتتاليات)..." autocomplete="off" />
+          <input type="text" id="search-input" class="search-input" placeholder="Search by title or concept (d/dx, ln, التكامل, Suites, المعلم المتعامد, f(x))..." autocomplete="off" />
           <button id="btn-clear-search" class="search-clear-btn" type="button">Clear</button>
         </div>
         <div class="quick-tags-label">Quick Mathematical Filters (D-Pad + ✕):</div>
         <div id="quick-tags" class="quick-tags">
           <button class="quick-tag-btn" data-query="">All Games</button>
           <button class="quick-tag-btn" data-query="calculus">Calculus / d/dx</button>
+          <button class="quick-tag-btn" data-query="المعلم المتعامد">(O; i, j) المعلم المتعامد</button>
           <button class="quick-tag-btn" data-query="تكامل">ln · e · التكامل</button>
           <button class="quick-tag-btn" data-query="suites">Suites / المتتاليات</button>
           <button class="quick-tag-btn" data-query="trig">Trigonometric</button>
@@ -243,7 +244,7 @@
           <h3 class="modal-section-title">Step 1: Create Game Directory</h3>
           <ul class="modal-list">
             <li>Create <code>games/&lt;your-game-slug&gt;/index.html</code></li>
-            <li>Import <code>../../shared/gamepad.js</code>, <code>retro-audio.js</code>, <code>math-engine.js</code></li>
+            <li>Import <code>../../shared/cartesian-world.js</code> (full <code>(O; i, j)</code> plane, <code>Stickman</code>, <code>FunctionPlotter</code>) or <code>gamepad.js</code>, <code>retro-audio.js</code>, <code>math-engine.js</code></li>
           </ul>
         </div>
 

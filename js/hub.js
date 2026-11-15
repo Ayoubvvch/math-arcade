@@ -80,6 +80,56 @@ function getGameArtworkSVG(game) {
     `;
   }
 
+  if (game.id === 'stickman-cartesian-game') {
+    return `
+      <svg class="tile-svg" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <radialGradient id="scGlow" cx="52%" cy="46%" r="56%">
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.32" />
+            <stop offset="100%" stop-color="#050814" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <rect width="320" height="200" fill="#040812" />
+        <circle cx="166" cy="94" r="92" fill="url(#scGlow)" />
+        <!-- Subtle Cartesian grid -->
+        <g stroke="#ffffff" stroke-opacity="0.08" stroke-width="1">
+          <line x1="48" y1="22" x2="48" y2="174" />
+          <line x1="144" y1="22" x2="144" y2="174" />
+          <line x1="192" y1="22" x2="192" y2="174" />
+          <line x1="240" y1="22" x2="240" y2="174" />
+          <line x1="288" y1="22" x2="288" y2="174" />
+          <line x1="28" y1="42" x2="296" y2="42" />
+          <line x1="28" y1="88" x2="296" y2="88" />
+        </g>
+        <!-- Axes (O; i, j) + orthogonality marker -->
+        <line x1="26" y1="134" x2="296" y2="134" stroke="#f8fafc" stroke-opacity="0.52" stroke-width="1.4" />
+        <line x1="96" y1="20" x2="96" y2="174" stroke="#f8fafc" stroke-opacity="0.52" stroke-width="1.4" />
+        <rect x="96" y="122" width="12" height="12" fill="rgba(56,189,248,0.16)" stroke="#38bdf8" stroke-opacity="0.85" stroke-width="1.2" />
+        <!-- Unit vector i -->
+        <line x1="96" y1="134" x2="144" y2="134" stroke="#ff4d6d" stroke-width="2.6" stroke-linecap="round" />
+        <polygon points="148,134 139,129.5 139,138.5" fill="#ff4d6d" />
+        <text x="122" y="150" text-anchor="middle" fill="#ff4d6d" font-family="Cambria Math, Georgia, serif" font-style="italic" font-weight="700" font-size="13">i⃗</text>
+        <!-- Unit vector j -->
+        <line x1="96" y1="134" x2="96" y2="86" stroke="#38bdf8" stroke-width="2.6" stroke-linecap="round" />
+        <polygon points="96,82 91.5,91 100.5,91" fill="#38bdf8" />
+        <text x="84" y="112" text-anchor="middle" fill="#38bdf8" font-family="Cambria Math, Georgia, serif" font-style="italic" font-weight="700" font-size="13">j⃗</text>
+        <text x="86" y="148" text-anchor="middle" fill="#cbd5e1" font-family="Cambria Math, Georgia, serif" font-style="italic" font-weight="700" font-size="12">O</text>
+        <!-- Function wave curve y = f(x) -->
+        <path d="M28 118 Q 76 154, 128 96 T 226 78 T 292 54" fill="none" stroke="#38bdf8" stroke-width="2.8" />
+        <!-- Tangent line & contact point -->
+        <line x1="152" y1="108" x2="226" y2="54" stroke="#fde047" stroke-dasharray="5 4" stroke-width="1.7" />
+        <circle cx="189" cy="81" r="4" fill="#fde047" />
+        <!-- Articulated Stickman + cyan scarf surfing the curve -->
+        <path d="M178 44 Q 162 49, 146 44" fill="none" stroke="#38bdf8" stroke-width="3.2" stroke-linecap="round" />
+        <circle cx="181" cy="36" r="6" fill="#ffffff" />
+        <line x1="181" y1="42" x2="184" y2="62" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" />
+        <polyline points="168,54 182,48 197,44" fill="none" stroke="#e2e8f0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+        <polyline points="177,78 184,62 195,73" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+        <text x="160" y="184" text-anchor="middle" fill="#bae6fd" font-family="JetBrains Mono, monospace" font-weight="800" font-size="11.5">(O; i⃗, j⃗) • y = f(x) • f'(x)</text>
+      </svg>
+    `;
+  }
+
   return `
     <svg class="tile-svg" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect width="320" height="200" fill="#070c18" />
